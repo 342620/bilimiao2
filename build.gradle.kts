@@ -14,6 +14,18 @@ buildscript {
         maven("https://jitpack.io")
     }
 
+    dependencies {
+        // 强制使用最新 R8 patch，修复 AGP 8.13.0 自带 R8 8.13.6 在解析
+        // Kotlin 2.3.0 metadata 时抛出 "Should never be called" 异常的问题
+        classpath("com.android.tools:r8:8.13.19")
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            force("com.android.tools:r8:8.13.19")
+        }
+    }
+
 }
 
 plugins {
