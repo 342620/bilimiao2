@@ -49,8 +49,10 @@ internal fun appBarMenuItemColors(
 }
 
 internal fun Modifier.appBarMenuItemSemantics(data: MenuItemData): Modifier {
-    return semantics {
-        data.contentDescription?.let { contentDescription = it }
+    return semantics(mergeDescendants = true) {
+        // 合并子节点（图标 + 文字）为单个无障碍节点，避免 TalkBack 重复朗读。
+        // 优先使用 contentDescription，为空时回退到 title，确保始终有可朗读的标签。
+        contentDescription = data.contentDescription ?: data.title
     }
 }
 
@@ -63,7 +65,10 @@ internal fun AppBarMenuItemIcon(
     data.iconVector?.let {
         Icon(
             imageVector = it,
-            contentDescription = data.title,
+            // contentDescription 设为 null：文字标签已在旁边提供名称，
+            // 若此处也设 title 会导致 TalkBack 重复朗读（如"首页首页"）。
+            // 无障碍标签由父级 appBarMenuItemSemantics 统一提供。
+            contentDescription = null,
             tint = contentColor,
             modifier = modifier
                 .size(AppBarConfig.MenuItemIconSize),

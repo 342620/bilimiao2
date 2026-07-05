@@ -2,6 +2,7 @@ package cn.a10miaomiao.bilimiao.compose.common.navigation
 
 import com.a10miaomiao.bilimiao.comm.utils.miaoLogger
 import com.a10miaomiao.bilimiao.comm.toast.GlobalToaster
+import java.net.URLEncoder
 
 object BilibiliNavigation {
 
@@ -88,14 +89,53 @@ object BilibiliNavigation {
             return true
         }
 
-        return pageNavigation.navigateByUri(url)
+        // bilibili://www.bilibili.com/... 这类 URI 实际是 B 站网页链接，
+        // 交给 navigationToWeb 转成 https:// 后用 WebView 打开。
+        // 但 bilibili://video、bilibili://space、bilibili://author 等 app scheme
+        // 已在上游注册了 deep link，需先尝试 navigateByUri 让 NavHost 匹配。
+        val navResult = pageNavigation.navigateByUri(url)
+        if (navResult) return true
+
+        if (uri.scheme == "bilibili") {
+            val host = uri.host ?: ""
+            // 仅当 host 是 bilibili.com / bilibili.tv / b23.tv 等域名时，
+            // 才视作网页链接转 https:// 打开；其它 bilibili://xxx 走不支持提示。
+            if ("bilibili.com" in host
+                || "bilibili.tv" in host
+                || "b23.tv" in host
+                || "b23.snm0516.aisee.tv" in host) {
+                navigationToWeb(pageNavigation, url)
+                return true
+            }
+        }
+
+        return false
     }
 
     fun navigationToWeb(
         pageNavigation: PageNavigator,
         url: String,
     ) {
-        val fullUrl = if ("://" in url) url else "http://$url"
+        // bilibili://www.bilibili.com/xxx → https://www.bilibili.com/xxx
+        // 仅当 host 是 B 站域名时才转换，其它 bilibili:// scheme（如 bilibili://game）
+        // 无法安全转成 https://，直接提示不支持。
+        val fullUrl = when {
+            url.startsWith("bilibili://") -> {
+                val rest = url.substringAfter("bilibili://")
+                val host = rest.substringBefore('/')
+                if ("bilibili.com" in host
+                    || "bilibili.tv" in host
+                    || "b23.tv" in host
+                    || "b23.snm0516.aisee.tv" in host) {
+                    "https://" + rest
+                } else {
+                    GlobalToaster.show("不支持的链接：$url")
+                    return
+                }
+            }
+            "://" in url -> url
+            else -> "http://$url"
+        }
         val uri = parseUrl(fullUrl)
         if (uri.scheme != "http" && uri.scheme != "https") {
             GlobalToaster.show("不支持的链接：$url")
@@ -106,7 +146,11 @@ object BilibiliNavigation {
             || "bilibili.tv" in host
             || "b23.tv" in host
             || "b23.snm0516.aisee.tv" in host) {
-            pageNavigation.navigateByUri("bilimiao://web?url=$url")
+            // URL 编码：B 站专题页 URL 常带 ? 和 &，不编码的话 deepLink 会把 &...
+            // 当成 bilimiao://web 的额外查询参数，导致 WebPage.url 被截断、页面打不开。
+            // 接收端 navDeepLink 会自动 URL 解码。
+            val encodedUrl = URLEncoder.encode(fullUrl, "UTF-8")
+            pageNavigation.navigateByUri("bilimiao://web?url=$encodedUrl")
         } else {
             pageNavigation.launchWebBrowser(fullUrl)
         }
