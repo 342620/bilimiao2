@@ -11,6 +11,10 @@ pluginManagement {
         mavenCentral()
     }
 }
+plugins {
+    // 自动解析并下载 grpc-generator 所需的 JDK 17 toolchain
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

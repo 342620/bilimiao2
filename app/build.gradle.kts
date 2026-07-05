@@ -50,6 +50,11 @@ android {
             applicationIdSuffix = ".dev"
             resValue("string", "app_name", "bilimiao dev")
             manifestPlaceholders["channel"] = "Development"
+            // 使用与 release 相同的签名，保证 CI 每次构建签名一致，
+            // 用户不必每次卸载重装（密码 12345678，见 app/signing.properties）
+            signingConfigs.asMap["miao"]?.let {
+                signingConfig = it
+            }
         }
         release {
             isMinifyEnabled = false

@@ -71,8 +71,14 @@ class AppStore(override val di: DI) :
             appDataStore.edit {
                 it[SettingPreferences.ThemeDarkMode] = mode
             }
+            // 同步更新 in-memory state，让 Compose collectAsState 立即看到变化
+            setState {
+                theme = theme?.copy(darkMode = mode)
+            }
         }
-        setDarkMode(mode)
+        // 全限定名调用平台层 setDarkMode（Android: AppCompatDelegate.setDefaultNightMode）
+        // 避免与本类的同名 member 函数发生重载歧义
+        com.a10miaomiao.bilimiao.comm.platform.setDarkMode(mode)
     }
 
     fun setThemeColor(color: Long, type: Int) {
@@ -81,6 +87,9 @@ class AppStore(override val di: DI) :
                 it[SettingPreferences.ThemeColor] = color
                 it[SettingPreferences.ThemeType] = type
             }
+            setState {
+                theme = theme?.copy(color = color.toInt(), type = type)
+            }
         }
     }
 
@@ -88,6 +97,9 @@ class AppStore(override val di: DI) :
         viewModelScope.launch {
             appDataStore.edit {
                 it[SettingPreferences.ThemeAppBarType] = type
+            }
+            setState {
+                theme = theme?.copy(appBarType = type)
             }
         }
     }

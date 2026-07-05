@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -67,7 +69,13 @@ fun AppBarNavigationItem(
             .fillMaxHeight()
             .padding(horizontal = 8.dp, vertical = 4.dp)
             .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = { onClick(data) })
+            .clickable(
+                onClick = { onClick(data) },
+            )
+            // 仅暴露选中状态给屏幕阅读器（无障碍），不改变任何视觉 UI
+            .semantics {
+                selected = checked
+            }
             .appBarMenuItemSemantics(data),
         contentAlignment = Alignment.Center,
     ) {
