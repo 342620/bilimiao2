@@ -12,7 +12,7 @@ tasks.withType<JavaCompile>().all {
 }
 
 dependencies {
-    val pbandkVersion = "0.14.4-SNAPSHOT"
+    val pbandkVersion = "0.16.0"
     compileOnly("pro.streem.pbandk:pbandk-runtime:$pbandkVersion")
     compileOnly("pro.streem.pbandk:protoc-gen-pbandk-lib:$pbandkVersion")
 }
