@@ -1,0 +1,20 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+*/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+app/signing.properties
+
+# 签名与密钥：仓库是公开的，禁止提交
+*.keystore
+*.jks
+signing.properties
+app/signing.properties
+*.keystore.bak
+build-*.log
