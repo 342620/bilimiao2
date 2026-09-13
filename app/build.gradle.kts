@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.a10miaomiao.bilimiao.accessibility"
+    namespace = "com.a10miaomiao.bilimiao"
     compileSdk = 36
 
     defaultConfig {
