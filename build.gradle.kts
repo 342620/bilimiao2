@@ -7,11 +7,10 @@ buildscript {
         set("target_sdk_version", 36)
     }
     repositories {
-        maven("https://maven.aliyun.com/repository/google")
-        maven("https://maven.aliyun.com/repository/public")
         google()
         mavenCentral()
         maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://maven.aliyun.com/repository/public")
         maven("https://jitpack.io")
     }
 
