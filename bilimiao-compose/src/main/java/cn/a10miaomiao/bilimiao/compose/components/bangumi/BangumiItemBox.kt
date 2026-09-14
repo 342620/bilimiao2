@@ -165,11 +165,11 @@ fun BangumiItemBox(
                                 expandedMenu.value = true
                             }
                         ) {
-                            Icon(
-                                tint = MaterialTheme.colorScheme.onBackground,
-                                imageVector = Icons.Filled.MoreVert,
-                                contentDescription = null,
-                            )
+Icon(
+                                    tint = MaterialTheme.colorScheme.onBackground,
+                                    imageVector = Icons.Filled.MoreVert,
+                                    contentDescription = "更多",
+                                )
                         }
                         DropdownMenu(
                             expanded = expandedMenu.value,

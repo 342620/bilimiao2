@@ -115,7 +115,7 @@ fun BangumiEpisodeItem(
                     ) {
                         Icon(
                             Icons.Filled.MoreVert,
-                            null,
+                            "更多",
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     }

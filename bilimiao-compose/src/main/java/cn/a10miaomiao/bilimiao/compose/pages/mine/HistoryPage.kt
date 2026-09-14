@@ -53,6 +53,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -623,6 +625,8 @@ private fun CalendarRowView(
                 val dateHeader = formatter.format(date).let { day ->
                     day.firstOrNull()?.toString() ?: day
                 }
+                // 完整星期（如"周六"），用于无障碍播报
+                val weekdayText = formatter.format(date)
 
                 val isEnable = date >= (endDate ?: startDate)
                 val color = if (isEnable)
@@ -631,7 +635,28 @@ private fun CalendarRowView(
                     MaterialTheme.colorScheme.outlineVariant
                 Column(
                     modifier = Modifier
-                        .size(40.dp),
+                        .size(40.dp)
+                        // 无障碍：一个日期只保留一个焦点，读成"6月13日 周六"（今天会带上"今天"），
+                        // 否则星期和日号会被拆成两个焦点
+                        .run {
+                            if (isEnable) clickable { onChangeDate(date) }
+                            else this
+                        }
+                        .clearAndSetSemantics {
+                            contentDescription = buildString {
+                                append("${date.monthNumber}月${date.dayOfMonth}日")
+                                append(weekdayText)
+                                if (date == currentDate) {
+                                    append("，今天")
+                                }
+                            }
+                            if (isEnable) {
+                                onClick(label = null) {
+                                    onChangeDate(date)
+                                    true
+                                }
+                            }
+                        },
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
