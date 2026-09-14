@@ -447,7 +447,7 @@ fun ReplyDetailContent(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = null,
+                        contentDescription = "关闭",
                         tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier
                             .padding(8.dp)
