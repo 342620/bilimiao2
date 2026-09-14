@@ -192,6 +192,12 @@ class MainReplyViewModel(
                 if (currentReply.value?.id == newItem.id) {
                     _currentReply.value = newItem
                 }
+                // 成功后给一次反馈，否则读屏在点赞这一瞬间没有任何提示
+                if (newAction == 1L) {
+                    A11yPopTip.show("点赞成功")
+                } else {
+                    A11yPopTip.show("已取消点赞")
+                }
             } else {
                 A11yPopTip.show(res.message)
             }
