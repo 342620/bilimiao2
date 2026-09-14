@@ -157,6 +157,11 @@ class AppBarHorizontalUi(
             if (prop.navigationButtonIcon != null) {
                 mNavigationIconLayout.visibility = View.VISIBLE
                 mNavigationIcon.imageDrawable = prop.navigationButtonIcon
+                // 左上角这个按钮只有图标，补无障碍名称：可返回时读“返回”，否则读“菜单”
+                mNavigationIconLayout.contentDescription = when (prop.navigationButtonKey) {
+                    MenuKeys.menu -> "菜单"
+                    else -> "返回"
+                }
             } else {
                 mNavigationIconLayout.visibility = View.GONE
             }
