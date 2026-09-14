@@ -18,6 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.ImagePreviewerController
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.PreviewImageModel
@@ -57,13 +61,19 @@ private fun ImagesScrollItem(
 //        )
 //    ) {
     Box(
-        modifier = modifier.clickable {
-            previewerController.enterTransform(
-                state = previewerState,
-                models = imageModels,
-                index = index
-            )
-        }
+        modifier = modifier
+            // 无障碍：每张图各自一个焦点，读“图片第X张，共Y张”，双击打开大图
+            .semantics {
+                role = Role.Image
+                contentDescription = imagePositionText(index, imageModels.size)
+            }
+            .clickable(onClickLabel = "查看图片") {
+                previewerController.enterTransform(
+                    state = previewerState,
+                    models = imageModels,
+                    index = index
+                )
+            }
     ) {
         TransformItemView(
             key = model.originalUrl,

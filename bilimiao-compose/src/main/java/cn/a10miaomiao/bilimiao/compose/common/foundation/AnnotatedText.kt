@@ -73,7 +73,9 @@ fun annotatedText(
             when (it) {
                 is AnnotatedTextNode.Text -> append(it.text)
                 is AnnotatedTextNode.Emote -> {
-                    appendInlineContent(it.text)
+                    // 无障碍：inline content 必须给 alternateText，
+                    // 否则读屏只拿到一个占位符，表情等于没有标签，读不出来
+                    appendInlineContent(it.text, alternateText = it.text)
                 }
                 is AnnotatedTextNode.Link -> {
                     if (it.withLineBreak) {

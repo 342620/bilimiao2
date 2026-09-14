@@ -193,17 +193,19 @@ fun MyImagePreviewer(
         configId = pageConfigId,
         onMenuItemClick = controller::menuItemClick,
     )
+    val previewerState = imagePreviewerState.previewerState
+    val imageCount = imagePreviewerState.imageModels.size
+    // 当前是第几张：跟着翻页一起变，翻到下一张会重新播报位置
+    val currentPage = previewerState.currentPage.coerceIn(0, (imageCount - 1).coerceAtLeast(0))
     ImagePreviewer(
         modifier = Modifier
             .fillMaxSize()
             .semantics {
                 // 展开大图时给整层一个可聚焦的无障碍节点：
                 // role 让它被识别为图片，onClick 让它具备可执行动作（TalkBack 才肯把焦点落上来）
-                // 图片数量文案与评论区保持一致
+                // 文案与评论区、动态图片保持一致，读“图片第X张，共Y张”
                 role = Role.Image
-                contentDescription = listOf("查看图片", imageCountText(imagePreviewerState.imageModels.size))
-                    .filter { it.isNotEmpty() }
-                    .joinToString("，")
+                contentDescription = imagePositionText(currentPage, imageCount)
                 onClick(label = "关闭") {
                     scope.launch {
                         imagePreviewerState.previewerState.exitTransform()

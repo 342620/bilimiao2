@@ -11,3 +11,10 @@ fun imageCountText(count: Int): String = when {
     count > 1 -> "共${count}张图片"
     else -> ""
 }
+
+/**
+ * 多张图时单张图片的无障碍文案，说明当前位置和总数：
+ * "图片第 2 张，共 3 张"。
+ */
+fun imagePositionText(index: Int, count: Int): String =
+    "图片第${index + 1}张，共${count}张"

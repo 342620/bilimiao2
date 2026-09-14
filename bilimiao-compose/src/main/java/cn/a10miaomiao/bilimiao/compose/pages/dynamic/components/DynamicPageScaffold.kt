@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -152,14 +150,17 @@ private fun DynamicAllAndVideoWrap(
         modifier = Modifier.fillMaxSize()
     ) {
         if (isMiniUpList) {
+            // 顶部间距挪到 Row 上：原来贴在 TabRow 上会把标签整体下压，
+            // 右边的"最常访问"按钮按行居中，就跟标签不在一条线上了
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TabRow(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
+                        .weight(1f),
                     selectedTabIndex = pagerState.currentPage,
                     indicator = { positions ->
                         TabRowDefaults.PrimaryIndicator(
@@ -185,12 +186,12 @@ private fun DynamicAllAndVideoWrap(
                     }
                 }
                 // “最常访问”放在 TabRow 外面：它不是标签页，
-                // 混在标签行里会被读屏当成第三个标签、多一层焦点
+                // 混在标签行里会被读屏当成第三个标签、多一层焦点；
+                // 不写死高度，交给行内居中对齐，和左边的标签保持同一水平线
                 TextButton(
                     onClick = toUpper,
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                     modifier = Modifier
-                        .height(36.dp)
                         .padding(horizontal = 8.dp)
                 ) {
                     Text(

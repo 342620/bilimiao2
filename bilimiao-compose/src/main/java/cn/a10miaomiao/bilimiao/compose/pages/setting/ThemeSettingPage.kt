@@ -1,13 +1,12 @@
 package cn.a10miaomiao.bilimiao.compose.pages.setting
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -21,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -153,26 +154,38 @@ private fun ThemeSettingPageContent(
                 )
                 SingleChoiceSegmentedButtonRow {
                     viewModel.darkModeList.forEachIndexed { index, mode ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = viewModel.darkModeListSize,
-                            ),
-                            onClick = {
-                                viewModel.setDarkMode(mode.first)
-                            },
-                            selected = index == themeState.darkMode,
+                        // 无障碍：M3 的 SegmentedButton 会把 selected 放在自己的节点上，
+                        // 读屏会按控件状态再念一次选中态，外面叠语义覆盖不掉它，
+                        // 所以每个按钮外面套一层，用 clearAndSetSemantics 覆盖整棵子树，
+                        // 只保留一条文字和一条状态；按钮 fillMaxWidth 撑满，外观不变。
+                        Box(
                             modifier = Modifier
-                                .width(IntrinsicSize.Max)
-                                .semantics {
-                                    // 选中状态只走 stateDescription，避免 TalkBack 按控件状态再念一次
+                                .weight(1f)
+                                .clearAndSetSemantics {
+                                    contentDescription = mode.second
                                     stateDescription = if (index == themeState.darkMode) "已选中" else "未选中"
+                                    onClick(label = null) {
+                                        viewModel.setDarkMode(mode.first)
+                                        true
+                                    }
                                 },
                         ) {
-                            Text(
-                                text = mode.second,
-                                softWrap = false,
-                            )
+                            SegmentedButton(
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = viewModel.darkModeListSize,
+                                ),
+                                onClick = {
+                                    viewModel.setDarkMode(mode.first)
+                                },
+                                selected = index == themeState.darkMode,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = mode.second,
+                                    softWrap = false,
+                                )
+                            }
                         }
                     }
                 }
@@ -195,26 +208,35 @@ private fun ThemeSettingPageContent(
                 )
                 SingleChoiceSegmentedButtonRow {
                     viewModel.appBarTypeList.forEachIndexed { index, type ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = viewModel.appBarTypeListSize,
-                            ),
-                            onClick = {
-                                viewModel.setAppBarType(type.first)
-                            },
-                            selected = index == themeState.appBarType,
+                        // 同上：外面套一层覆盖整棵子树的语义，避免选中态读两遍
+                        Box(
                             modifier = Modifier
-                                .width(IntrinsicSize.Max)
-                                .semantics {
-                                    // 选中状态只走 stateDescription，避免 TalkBack 按控件状态再念一次
+                                .weight(1f)
+                                .clearAndSetSemantics {
+                                    contentDescription = type.second
                                     stateDescription = if (index == themeState.appBarType) "已选中" else "未选中"
+                                    onClick(label = null) {
+                                        viewModel.setAppBarType(type.first)
+                                        true
+                                    }
                                 },
                         ) {
-                            Text(
-                                text = type.second,
-                                softWrap = false,
-                            )
+                            SegmentedButton(
+                                shape = SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = viewModel.appBarTypeListSize,
+                                ),
+                                onClick = {
+                                    viewModel.setAppBarType(type.first)
+                                },
+                                selected = index == themeState.appBarType,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Text(
+                                    text = type.second,
+                                    softWrap = false,
+                                )
+                            }
                         }
                     }
                 }

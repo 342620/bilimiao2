@@ -304,6 +304,7 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
         enlargeImageRes = R.drawable.ic_player_portrait_fullscreen
         shrinkImageRes = R.drawable.ic_player_portrait_fullscreen
         initDanmakuContext()
+        updateFullscreenButtonA11y()
         mButtomPlay.setOnClickListener {
             clickStartIcon()
         }
@@ -373,6 +374,16 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
                 updateDanmakuMargin()
             }
         }
+        updateFullscreenButtonA11y()
+    }
+
+    /**
+     * 全屏切换按钮的无障碍标签
+     * 竖屏时读"全屏"，全屏时读"竖屏"，读的是按下去会做什么
+     */
+    private fun updateFullscreenButtonA11y() {
+        val isFull = mode == PlayerMode.FULL
+        fullscreenButton?.contentDescription = if (isFull) "竖屏" else "全屏"
     }
 
     /**
