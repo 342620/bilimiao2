@@ -612,30 +612,53 @@ class MainActivity
         // 百度移动统计埋点
         BilimiaoStatService.onResume(this)
 
+        clipboardCheckRetry = 0
         checkClipboardBiliLink()
+    }
+
+    /**
+     * Android10 起，应用只有在拿到窗口焦点后才被允许读剪贴板。
+     * 冷启动时 onResume 往往早于焦点建立，那一次读会拿到空值，
+     * 所以拿到焦点后再来一次，覆盖“切回前台才识别刚复制的链接”的场景。
+     */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            clipboardCheckRetry = 0
+            checkClipboardBiliLink()
+        }
     }
 
     /**
      * 剪贴板里的 B 站链接解析。
      *
-     * 应用回到前台时读一次剪贴板（前台读取剪贴板不需要权限），
+     * 读剪贴板没有可申请的运行时权限，系统只要求应用在前台且拿到了窗口焦点；
      * 认出 B 站视频/UP 主链接就用底部面板把对应卡片弹出来。
-     * 同一个链接只弹一次，避免来回切换页面时反复弹出。
+     * 同一段文本只处理一次，避免来回切换页面时反复弹出。
      */
     private fun checkClipboardBiliLink() {
         try {
             val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                 ?: return
-            if (!clipboardManager.hasPrimaryClip()) return
-            val text = clipboardManager.primaryClip
-                ?.getItemAt(0)
-                ?.coerceToText(this)
-                ?.toString()
-                ?.trim()
-                .orEmpty()
-            if (text.isEmpty() || text == lastClipboardBiliLink) return
-            val link = BiliLinkParser.parse(text) ?: return
-            lastClipboardBiliLink = text
+            val text = readClipboardText(clipboardManager)
+            if (text.isEmpty()) {
+                // 系统还没放行（应用尚未拿到焦点）时这里读不到内容，稍后重试几次
+                if (clipboardCheckRetry < CLIPBOARD_CHECK_MAX_RETRY) {
+                    clipboardCheckRetry++
+                    window.decorView.postDelayed(
+                        { checkClipboardBiliLink() },
+                        500L * clipboardCheckRetry,
+                    )
+                }
+                return
+            }
+            if (text == lastClipboardText) return
+            lastClipboardText = text
+            val link = BiliLinkParser.parse(text)
+            if (link == null) {
+                miaoLogger().d("clipboard" to "no bili link", "text" to text.take(60))
+                return
+            }
             openBottomSheet(BiliLinkPage.of(link))
         } catch (e: Exception) {
             // 读剪贴板失败不影响正常使用
@@ -643,7 +666,22 @@ class MainActivity
         }
     }
 
-    private var lastClipboardBiliLink: String? = null
+    private fun readClipboardText(clipboardManager: ClipboardManager): String {
+        if (!clipboardManager.hasPrimaryClip()) return ""
+        return clipboardManager.primaryClip
+            ?.getItemAt(0)
+            ?.coerceToText(this)
+            ?.toString()
+            ?.trim()
+            .orEmpty()
+    }
+
+    private var lastClipboardText: String? = null
+    private var clipboardCheckRetry = 0
+
+    private companion object {
+        const val CLIPBOARD_CHECK_MAX_RETRY = 3
+    }
 
     override fun onPause() {
         super.onPause()
