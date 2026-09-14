@@ -3,7 +3,7 @@ package cn.a10miaomiao.bilimiao.compose.components.dyanmic
 import bilibili.app.dynamic.v2.DynamicItem
 import bilibili.app.dynamic.v2.Module
 import bilibili.app.dynamic.v2.ModuleDynamic
-import cn.a10miaomiao.bilimiao.compose.components.image.imageCountText
+import cn.a10miaomiao.bilimiao.compose.components.image.dynamicImageCountText
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.PreviewImageModel
 import com.a10miaomiao.bilimiao.comm.utils.NumberUtil
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
@@ -107,7 +107,7 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
     if (content.isNotBlank()) {
         parts.add(content)
     }
-    val imageText = imageCountText(images.size)
+    val imageText = dynamicImageCountText(images.size)
     when {
         imageText.isNotEmpty() -> parts.add(imageText)
         videoTitle != null -> parts.add("视频：$videoTitle")
