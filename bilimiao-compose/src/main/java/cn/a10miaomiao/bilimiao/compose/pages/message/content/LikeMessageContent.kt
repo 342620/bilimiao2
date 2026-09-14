@@ -207,7 +207,10 @@ internal fun LikeMessageContent() {
                         },
                         onMessageClick = {
 
-                        }
+                        },
+                        detailActionLabel = "查看详情",
+                        // 点赞消息没有可点开的评论内容
+                        messageActionLabel = null,
                     )
                 }
             }

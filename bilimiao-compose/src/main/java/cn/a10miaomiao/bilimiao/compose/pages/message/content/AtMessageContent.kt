@@ -201,7 +201,9 @@ internal fun AtMessageContent() {
                         },
                         onMessageClick = {
                             viewModel.toMessagePage(item)
-                        }
+                        },
+                        detailActionLabel = "查看详情",
+                        messageActionLabel = "查看内容来源",
                     )
                 }
             }

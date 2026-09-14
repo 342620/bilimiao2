@@ -14,6 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -37,11 +41,42 @@ internal fun MessageItemBox(
     onUserClick: () -> Unit,
     onDetailClick: () -> Unit,
     onMessageClick: (() -> Unit),
+    /** 右侧那栏（被评论的内容 / 视频标题）对应的操作名称 */
+    detailActionLabel: String = "查看详情",
+    /** 评论内容对应的操作名称，不需要时传 null */
+    messageActionLabel: String? = null,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(10.dp)
+            // 整条消息合成一个无障碍焦点：头像、昵称、动作、评论内容、右侧被评论内容、时间
+            // 一起读；原来的点头像/点内容/点右侧改成读屏的操作菜单
+            .clearAndSetSemantics {
+                contentDescription = buildMessageDescription(
+                    nickname = nickname,
+                    actionText = actionText,
+                    sourceContent = sourceContent,
+                    title = title,
+                    time = time,
+                )
+                customActions = buildList {
+                    add(CustomAccessibilityAction("查看用户主页") {
+                        onUserClick()
+                        true
+                    })
+                    if (sourceContent.isNotBlank() && messageActionLabel != null) {
+                        add(CustomAccessibilityAction(messageActionLabel) {
+                            onMessageClick()
+                            true
+                        })
+                    }
+                    add(CustomAccessibilityAction(detailActionLabel) {
+                        onDetailClick()
+                        true
+                    })
+                }
+            },
     ) {
         GlideImage(
             model = UrlUtil.autoHttps(avatar) + "@200w_200h",
@@ -104,4 +139,22 @@ internal fun MessageItemBox(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
+}
+
+/**
+ * 消息条目的无障碍文案，顺序：昵称加动作、评论内容、右侧被评论的内容、时间。
+ */
+private fun buildMessageDescription(
+    nickname: String,
+    actionText: String,
+    sourceContent: String?,
+    title: String?,
+    time: Long,
+): String {
+    val parts = mutableListOf<String>()
+    (nickname + actionText).trim().takeIf { it.isNotEmpty() }?.let { parts.add(it) }
+    sourceContent?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
+    title?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
+    NumberUtil.converCTime(time).takeIf { it.isNotBlank() }?.let { parts.add(it) }
+    return parts.joinToString(", ")
 }
