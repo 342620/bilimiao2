@@ -174,8 +174,8 @@ private class BiliLinkViewModel(
             title = arc.title,
             pic = arc.pic,
             upperName = arc.author?.name.orEmpty(),
-            playNum = arc.stat?.view ?: 0L,
-            danmakuNum = arc.stat?.danmaku ?: 0L,
+            playNum = arc.stat?.view?.toLong() ?: 0L,
+            danmakuNum = arc.stat?.danmaku?.toLong() ?: 0L,
             duration = NumberUtil.converDuration(arc.duration),
         )
     }
@@ -224,6 +224,8 @@ private fun BiliLinkContent(
     val fail by viewModel.fail.collectAsState()
     val videoCard by viewModel.videoCard.collectAsState()
     val authorCard by viewModel.authorCard.collectAsState()
+    // 委派属性不能智能转换，先取出来
+    val failMessage = fail
 
     Box(
         modifier = Modifier
@@ -237,8 +239,8 @@ private fun BiliLinkContent(
                     .height(140.dp),
             )
 
-            fail != null -> BiliFailBox(
-                e = fail,
+            failMessage != null -> BiliFailBox(
+                e = failMessage,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp),
