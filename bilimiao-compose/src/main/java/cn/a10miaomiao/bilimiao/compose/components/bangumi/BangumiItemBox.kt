@@ -25,9 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import cn.a10miaomiao.bilimiao.compose.common.foundation.htmlPlainText
 import cn.a10miaomiao.bilimiao.compose.common.foundation.htmlText
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -56,15 +58,18 @@ fun BangumiItemBox(
                 else clickable(onClick = onClick)
             }
             .semantics(mergeDescendants = true) {
-                contentDescription = with(StringBuilder()) {
-                    append(title)
+                // 注意：这里必须用 apply/返回 StringBuilder。
+                // 原来写成 with(StringBuilder()) { ... }，当最后一个 if 不成立时，
+                // 整个 with 的值是 Unit，toString() 就成了 "kotlin.Unit"
+                contentDescription = StringBuilder().apply {
+                    append(if (isHtml) htmlPlainText(title) else title)
                     if (!statusText.isNullOrBlank()) {
                         append(",")
-                        append(statusText)
+                        append(if (isHtml) htmlPlainText(statusText) else statusText)
                     }
                     if (!desc.isNullOrBlank()) {
                         append(",")
-                        append(desc)
+                        append(if (isHtml) htmlPlainText(desc) else desc)
                     }
                 }.toString()
             }
@@ -104,7 +109,10 @@ fun BangumiItemBox(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 2,
-                    modifier = Modifier.padding(bottom = 5.dp),
+                    modifier = Modifier
+                        .padding(bottom = 5.dp)
+                        // 文字不参与合并：卡片本身已经用 contentDescription 播报整条信息
+                        .clearAndSetSemantics {},
                 )
             } else {
                 Text(
@@ -112,7 +120,9 @@ fun BangumiItemBox(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 2,
-                    modifier = Modifier.padding(bottom = 5.dp),
+                    modifier = Modifier
+                        .padding(bottom = 5.dp)
+                        .clearAndSetSemantics {},
                 )
             }
             if (statusText != null) {
@@ -121,7 +131,9 @@ fun BangumiItemBox(
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
-                    modifier = Modifier.padding(bottom = 5.dp),
+                    modifier = Modifier
+                        .padding(bottom = 5.dp)
+                        .clearAndSetSemantics {},
                 )
             }
             if (desc != null) {
@@ -130,7 +142,9 @@ fun BangumiItemBox(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline,
                     maxLines = 1,
-                    modifier = Modifier.padding(),
+                    modifier = Modifier
+                        .padding()
+                        .clearAndSetSemantics {},
                 )
             }
             if (moreMenu.isNotEmpty()) {

@@ -25,8 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -126,10 +126,11 @@ fun VideoInfoBox(
             ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // 每个“图标 + 数字”合并成一个无障碍焦点，读成“播放量 1234”，
-            // 避免标签和数量被拆成两个焦点
+            // 每个“图标 + 数字”合并成一个无障碍焦点，读成“播放量 1234”。
+            // 用 clearAndSetSemantics 直接覆盖子树：否则合并进来的数字文本会和
+            // 描述各念一遍，变成“播放量 1234，1234”
             Row(
-                modifier = Modifier.semantics(mergeDescendants = true) {
+                modifier = Modifier.clearAndSetSemantics {
                     contentDescription = "播放量 ${NumberUtil.converString(stat?.view ?: 0)}"
                 },
                 verticalAlignment = Alignment.CenterVertically,
@@ -149,7 +150,7 @@ fun VideoInfoBox(
             }
             Spacer(modifier = Modifier.width(10.dp))
             Row(
-                modifier = Modifier.semantics(mergeDescendants = true) {
+                modifier = Modifier.clearAndSetSemantics {
                     contentDescription = "弹幕数 ${NumberUtil.converString(stat?.danmaku ?: 0)}"
                 },
                 verticalAlignment = Alignment.CenterVertically,

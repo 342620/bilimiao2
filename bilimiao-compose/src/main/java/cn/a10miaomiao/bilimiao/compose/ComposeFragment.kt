@@ -366,7 +366,7 @@ fun MyBottomSheetTitleBar(
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "close"
+                contentDescription = "关闭"
             )
         }
 

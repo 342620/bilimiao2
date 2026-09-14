@@ -39,6 +39,7 @@ import cn.a10miaomiao.bilimiao.compose.assets.bilimiaoicons.Common
 import cn.a10miaomiao.bilimiao.compose.assets.bilimiaoicons.common.Danmukunum
 import cn.a10miaomiao.bilimiao.compose.assets.bilimiaoicons.common.Playnum
 import cn.a10miaomiao.bilimiao.compose.assets.bilimiaoicons.common.Upper
+import cn.a10miaomiao.bilimiao.compose.common.foundation.htmlPlainText
 import cn.a10miaomiao.bilimiao.compose.common.foundation.htmlText
 import com.a10miaomiao.bilimiao.comm.utils.NumberUtil
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
@@ -73,7 +74,8 @@ fun VideoItemBox(
             // 只保留一条按固定顺序拼好的播报文案，避免同一个焦点被念两遍
             .clearAndSetSemantics {
                 contentDescription = videoItemContentDescription(
-                    title = title,
+                    // 标题可能带 <em class="keyword"> 高亮标签，播报要用纯文本
+                    title = title?.let { if (isHtml) htmlPlainText(it) else it },
                     upperName = upperName,
                     playNum = playNum,
                     damukuNum = damukuNum,

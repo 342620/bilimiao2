@@ -76,7 +76,6 @@ internal fun parseHtmlText(
     }
     return elementList
 }
-
 @Composable
 fun htmlText(
     contentText: String,
@@ -101,3 +100,12 @@ fun htmlText(
         }
     }
 }
+
+/**
+ * HTML 文本转纯文本。
+ *
+ * 搜索结果里的标题/简介带着 <em class="keyword"> 这类标签，
+ * 无障碍描述要用纯文本，否则读屏会把标签名也念出来。
+ */
+fun htmlPlainText(contentText: String): String =
+    parseHtmlText(contentText).joinToString("") { it.content }

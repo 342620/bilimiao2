@@ -146,7 +146,7 @@ fun VideoPagesBox(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                        contentDescription = "More",
+                        contentDescription = "查看全部分P",
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
