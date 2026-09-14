@@ -21,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.unit.sp
 import cn.a10miaomiao.bilimiao.compose.components.miao.MiaoTitleBar
 import cn.a10miaomiao.bilimiao.compose.pages.community.MainReplyViewModel
@@ -80,6 +82,7 @@ fun VideoReplyTitleBar(
                     onDismissRequest = {
                         expanded.value = false
                     },
+                    modifier = Modifier.semantics { paneTitle = "列表排序" },
                 ) {
                     viewModel.sortOrderList.forEach {
                         DropdownMenuItem(

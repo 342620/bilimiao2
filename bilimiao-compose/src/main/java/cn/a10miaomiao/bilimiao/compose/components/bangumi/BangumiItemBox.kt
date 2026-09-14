@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -173,6 +174,7 @@ fun BangumiItemBox(
                         DropdownMenu(
                             expanded = expandedMenu.value,
                             onDismissRequest = { expandedMenu.value = false },
+                            modifier = Modifier.semantics { paneTitle = "更多" },
                         ) {
                             moreMenu.filterNotNull().forEach { menu ->
                                 DropdownMenuItem(
