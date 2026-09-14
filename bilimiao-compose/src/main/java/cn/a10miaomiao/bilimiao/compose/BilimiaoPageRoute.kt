@@ -46,6 +46,7 @@ import cn.a10miaomiao.bilimiao.compose.pages.dynamic.DynamicPage
 import cn.a10miaomiao.bilimiao.compose.pages.filter.FilterSettingPage
 import cn.a10miaomiao.bilimiao.compose.pages.home.HomePage
 import cn.a10miaomiao.bilimiao.compose.pages.lyric.LyricPage
+import cn.a10miaomiao.bilimiao.compose.pages.link.BiliLinkPage
 import cn.a10miaomiao.bilimiao.compose.pages.message.MessagePage
 import cn.a10miaomiao.bilimiao.compose.pages.mine.HistoryPage
 import cn.a10miaomiao.bilimiao.compose.pages.mine.MyBangumiPage
@@ -112,6 +113,9 @@ class BilimiaoPageRoute (
                 }
             )
         )
+
+        // link
+        composable<BiliLinkPage>()
 
         // auth
         composable<LoginPage>()
