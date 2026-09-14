@@ -85,7 +85,8 @@ class PicInPicHelper(
             RemoteAction(
                 Icon.createWithResource(activity, R.drawable.bili_player_play_can_pause),
                 "暂停",
-                "",
+                // 画中画动作的无障碍名称读的是 contentDescription，留空会让读屏读成没有名字的按钮
+                "暂停",
                 PendingIntent.getBroadcast(
                     activity,
                     REQUEST_TYPE_PAUSE,
@@ -97,7 +98,7 @@ class PicInPicHelper(
             RemoteAction(
                 Icon.createWithResource(activity, R.drawable.bili_player_play_can_play),
                 "播放",
-                "",
+                "播放",
                 PendingIntent.getBroadcast(
                     activity,
                     REQUEST_TYPE_PLAY,
