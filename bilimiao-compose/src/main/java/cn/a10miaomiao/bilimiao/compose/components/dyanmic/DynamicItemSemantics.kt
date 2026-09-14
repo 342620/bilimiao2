@@ -3,6 +3,7 @@ package cn.a10miaomiao.bilimiao.compose.components.dyanmic
 import bilibili.app.dynamic.v2.DynamicItem
 import bilibili.app.dynamic.v2.Module
 import bilibili.app.dynamic.v2.ModuleDynamic
+import cn.a10miaomiao.bilimiao.compose.components.image.imageCountText
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.PreviewImageModel
 import com.a10miaomiao.bilimiao.comm.utils.NumberUtil
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
@@ -12,7 +13,7 @@ import kotlin.math.min
  * 动态卡片的无障碍信息。
  *
  * @param description 整张卡片合并成的一句话，顺序：昵称、发布时间、正文、
- *                    （含 N 张图片 / 视频标题）、点赞、评论
+ *                    （含 N 张图片 / 视频标题）、点赞、评论、转发
  * @param authorMid 作者 mid，用于“查看用户主页”
  * @param imageModels 图片列表，用于“查看图片”
  * @param isLiked 当前是否已点赞，用于播报“已点赞 …”
@@ -24,8 +25,8 @@ data class DynamicItemA11yInfo(
     val isLiked: Boolean = false,
     val likeCount: Long = 0L,
     val commentCount: Long = 0L,
+    val forwardCount: Long = 0L,
 )
-
 /** 从动态的各个 module 里抽取无障碍描述与操作需要的数据 */
 fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
     val parts = mutableListOf<String>()
@@ -35,6 +36,7 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
     var videoTitle: String? = null
     var like = 0L
     var reply = 0L
+    var repost = 0L
     var isLiked = false
 
     for (module in modules) {
@@ -94,6 +96,7 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
             is Module.ModuleItem.ModuleStat -> {
                 like = item.value.like
                 reply = item.value.reply
+                repost = item.value.repost
                 isLiked = item.value.likeInfo?.isLike == true
             }
 
@@ -104,9 +107,9 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
     if (content.isNotBlank()) {
         parts.add(content)
     }
+    val imageText = imageCountText(images.size)
     when {
-        images.size == 1 -> parts.add("含一张图片")
-        images.size > 1 -> parts.add("含${images.size}张图片")
+        imageText.isNotEmpty() -> parts.add(imageText)
         videoTitle != null -> parts.add("视频：$videoTitle")
     }
     parts.add(
@@ -117,7 +120,7 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
         }
     )
     parts.add("评论${NumberUtil.converString(reply)}")
-
+    parts.add("转发${NumberUtil.converString(repost)}")
     return DynamicItemA11yInfo(
         description = parts.joinToString(", "),
         authorMid = authorMid,
@@ -125,6 +128,7 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
         isLiked = isLiked,
         likeCount = like,
         commentCount = reply,
+        forwardCount = repost,
     )
 }
 

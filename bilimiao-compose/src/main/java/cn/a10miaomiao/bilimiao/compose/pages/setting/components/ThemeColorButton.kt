@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,7 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toHct
@@ -52,14 +52,16 @@ fun ThemeColorButton(
                 height = 100.dp,
             )
             .aspectRatio(1f)
-            .selectable(
-                selected = selected,
-                role = Role.RadioButton,
-                onClick = onClick,
-            ),
+            .semantics {
+                // 选中状态只走 stateDescription。
+                // 直接写 selected 会被 Compose 映射成 isCheckable/isChecked，
+                // TalkBack 会按控件状态再念一次，导致"已选中"读两遍。
+                stateDescription = if (selected) "已选中" else "未选中"
+            },
         shape = RoundedCornerShape(16.dp),
         color = cardColor,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        onClick = onClick,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

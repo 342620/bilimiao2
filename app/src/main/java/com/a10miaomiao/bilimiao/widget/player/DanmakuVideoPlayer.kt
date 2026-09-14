@@ -18,6 +18,7 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
@@ -31,6 +32,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -241,6 +244,9 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
         }
 
     private var subtitleIndex = 0
+
+    // 视频画面区域（surface_container），用于挂无障碍代理
+    private var mSurfaceContainerRef: View? = null
 
     val isAutoCompletion get() = currentState == CURRENT_STATE_AUTO_COMPLETE
     val currentPosition get() = try {
@@ -1142,17 +1148,68 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
      */
     private fun updateVideoSurfaceContentDescription() {
         try {
-            val surfaceContainer = findViewById<View>(com.shuyu.gsyvideoplayer.R.id.surface_container)
-            val isControllerVisible = mTopContainer?.visibility == VISIBLE
-            surfaceContainer?.contentDescription = if (isControllerVisible) {
-                "收起播控栏"
-            } else {
-                "展开播控栏"
+            setupVideoSurfaceAccessibility()
+            mSurfaceContainerRef?.let { container ->
+                container.contentDescription = controllerToggleText()
+                container.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)
             }
         } catch (e: Exception) {
             // 忽略异常
         }
     }
+
+    /**
+     * 视频画面区域的无障碍支持
+     *
+     * 该区域只保留一个焦点，描述为"展开播控栏/收起播控栏"。
+     * 画面区域本身不是 clickable，读屏双击默认没有任何动作，
+     * 所以这里补上 ACTION_CLICK，双击才会真正展开或收起播控栏。
+     */
+    private fun setupVideoSurfaceAccessibility() {
+        val container = mSurfaceContainerRef
+            ?: findViewById<View>(com.shuyu.gsyvideoplayer.R.id.surface_container)?.also {
+                mSurfaceContainerRef = it
+            }
+            ?: return
+        if (container.accessibilityDelegate is SurfaceAccessibilityDelegate) {
+            return
+        }
+        container.accessibilityDelegate = SurfaceAccessibilityDelegate()
+    }
+
+    /** 播控栏是否处于展开状态 */
+    private fun isControllerShown(): Boolean = mTopContainer?.visibility == VISIBLE
+
+    /** 画面区域的播报文案：显示时读"收起"，隐藏时读"展开" */
+    private fun controllerToggleText(): String =
+        if (isControllerShown()) "收起播控栏" else "展开播控栏"
+
+    /** 读屏双击画面区域：展开或收起播控栏 */
+    private fun toggleController() {
+        if (isControllerShown()) {
+            hideController()
+        } else {
+            showController()
+        }
+    }
+    private inner class SurfaceAccessibilityDelegate : View.AccessibilityDelegate() {
+        override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfo) {
+            super.onInitializeAccessibilityNodeInfo(host, info)
+            info.className = "android.widget.Button"
+            info.isClickable = true
+            info.contentDescription = controllerToggleText()
+            info.addAction(AccessibilityNodeInfo.ACTION_CLICK)
+        }
+
+        override fun performAccessibilityAction(host: View, action: Int, args: Bundle?): Boolean {
+            if (action == AccessibilityNodeInfo.ACTION_CLICK) {
+                toggleController()
+                return true
+            }
+            return super.performAccessibilityAction(host, action, args)
+        }
+    }
+
 
     fun showSmallDargBar() {
         if (mode == PlayerMode.SMALL_FLOAT) {

@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
@@ -160,7 +162,12 @@ private fun ThemeSettingPageContent(
                                 viewModel.setDarkMode(mode.first)
                             },
                             selected = index == themeState.darkMode,
-                            modifier = Modifier.width(IntrinsicSize.Max),
+                            modifier = Modifier
+                                .width(IntrinsicSize.Max)
+                                .semantics {
+                                    // 选中状态只走 stateDescription，避免 TalkBack 按控件状态再念一次
+                                    stateDescription = if (index == themeState.darkMode) "已选中" else "未选中"
+                                },
                         ) {
                             Text(
                                 text = mode.second,
@@ -197,7 +204,12 @@ private fun ThemeSettingPageContent(
                                 viewModel.setAppBarType(type.first)
                             },
                             selected = index == themeState.appBarType,
-                            modifier = Modifier.width(IntrinsicSize.Max),
+                            modifier = Modifier
+                                .width(IntrinsicSize.Max)
+                                .semantics {
+                                    // 选中状态只走 stateDescription，避免 TalkBack 按控件状态再念一次
+                                    stateDescription = if (index == themeState.appBarType) "已选中" else "未选中"
+                                },
                         ) {
                             Text(
                                 text = type.second,

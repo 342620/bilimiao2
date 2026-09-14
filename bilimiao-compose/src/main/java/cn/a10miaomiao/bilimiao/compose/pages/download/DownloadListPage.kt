@@ -18,6 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -306,32 +310,20 @@ internal fun DownloadListPageContent(
                 modifier = Modifier.padding(horizontal = 5.dp),
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
-                FilterChip(
-                    selected = status == 0,
-                    onClick = {
-                        status = 0
-                    },
-                    label = {
-                        Text(text = "全部")
-                    },
+                DownloadStatusChip(
+                    text = "全部",
+                    isSelected = status == 0,
+                    onClick = { status = 0 },
                 )
-                FilterChip(
-                    selected = status == 1,
-                    onClick = {
-                        status = 1
-                    },
-                    label = {
-                        Text(text = "下载中")
-                    },
+                DownloadStatusChip(
+                    text = "下载中",
+                    isSelected = status == 1,
+                    onClick = { status = 1 },
                 )
-                FilterChip(
-                    selected = status == 2,
-                    onClick = {
-                        status = 2
-                    },
-                    label = {
-                        Text(text = "下载完成")
-                    },
+                DownloadStatusChip(
+                    text = "下载完成",
+                    isSelected = status == 2,
+                    onClick = { status = 2 },
                 )
             }
         }
@@ -351,5 +343,37 @@ internal fun DownloadListPageContent(
         }
     }
 
+}
+
+/**
+ * 下载状态筛选项。
+ *
+ * FilterChip 自带的语义会把"已选中"读两遍（Compose 把 selected 同时映射成
+ * isCheckable/isChecked，TalkBack 会再按状态念一次），
+ * 所以这里在外层覆盖整棵子树的语义，只保留一条标签和一条状态描述：
+ * 选中状态统一走 stateDescription，不再叠加 selected。
+ */
+@Composable
+private fun DownloadStatusChip(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.clearAndSetSemantics {
+            contentDescription = text
+            stateDescription = if (isSelected) "已选中" else "未选中"
+            this.onClick(label = null) {
+                onClick()
+                true
+            }
+        },
+    ) {
+        FilterChip(
+            selected = isSelected,
+            onClick = onClick,
+            label = { Text(text = text) },
+        )
+    }
 }
 

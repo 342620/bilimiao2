@@ -17,6 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.R
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.ImagePreviewerController
@@ -96,54 +100,75 @@ fun ImagesGrid(
         pageCount = { count },
         getKey = { imageModels[it].originalUrl },
     )
-    if (count == 1) {
-        ImagesGridItem(
-            modifier = Modifier.sizeIn(
-                maxWidth = 300.dp,
-                maxHeight = 300.dp,
-            ),
-            index = 0,
-            imageModels = imageModels,
-            previewerController = previewerController,
-            previewerState = previewerState,
-        )
-    } else if (count <= 4) {
-        BoxWithConstraints {
-            val width = min(maxWidth.value, 300f)
-            FlowRow(
-                modifier = Modifier.width(width.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                for (index in 0 until count) {
-                    ImagesGridItem(
-                        modifier = Modifier.size((width / 2 - 4).dp),
-                        index = index,
-                        imageModels = imageModels,
-                        previewerController = previewerController,
-                        previewerState = previewerState,
-                        contentScale = ContentScale.Crop,
-                    )
+    // 无障碍：整组图片只成一个焦点，读出图片数量；
+    // "查看图片"通过无障碍操作（TalkBack 菜单）触发，不做逐张聚焦。
+    // 动态列表里的卡片会用 clearAndSetSemantics 整张合并，这里会被清掉，不影响列表页。
+    Box(
+        modifier = Modifier.clearAndSetSemantics {
+            contentDescription = imageCountText(count)
+            if (count > 0) {
+                customActions = listOf(
+                    CustomAccessibilityAction("查看图片") {
+                        previewerController.enterTransform(
+                            state = previewerState,
+                            models = imageModels,
+                            index = 0,
+                        )
+                        true
+                    },
+                )
+            }
+        },
+    ) {
+        if (count == 1) {
+            ImagesGridItem(
+                modifier = Modifier.sizeIn(
+                    maxWidth = 300.dp,
+                    maxHeight = 300.dp,
+                ),
+                index = 0,
+                imageModels = imageModels,
+                previewerController = previewerController,
+                previewerState = previewerState,
+            )
+        } else if (count <= 4) {
+            BoxWithConstraints {
+                val width = min(maxWidth.value, 300f)
+                FlowRow(
+                    modifier = Modifier.width(width.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    for (index in 0 until count) {
+                        ImagesGridItem(
+                            modifier = Modifier.size((width / 2 - 4).dp),
+                            index = index,
+                            imageModels = imageModels,
+                            previewerController = previewerController,
+                            previewerState = previewerState,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
             }
-        }
-    } else {
-        BoxWithConstraints {
-            val width = min(maxWidth.value, 330f)
-            FlowRow(
-                modifier = Modifier.width(width.dp),
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                for (index in 0 until count) {
-                    ImagesGridItem(
-                        modifier = Modifier.size((width / 3 - 3).dp),
-                        index = index,
-                        imageModels = imageModels,
-                        previewerController = previewerController,
-                        previewerState = previewerState,
-                        contentScale = ContentScale.Crop,
-                    )
+        } else {
+            BoxWithConstraints {
+                val width = min(maxWidth.value, 330f)
+                FlowRow(
+                    modifier = Modifier.width(width.dp),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    for (index in 0 until count) {
+                        ImagesGridItem(
+                            modifier = Modifier.size((width / 3 - 3).dp),
+                            index = index,
+                            imageModels = imageModels,
+                            previewerController = previewerController,
+                            previewerState = previewerState,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
             }
         }

@@ -199,8 +199,11 @@ fun MyImagePreviewer(
             .semantics {
                 // 展开大图时给整层一个可聚焦的无障碍节点：
                 // role 让它被识别为图片，onClick 让它具备可执行动作（TalkBack 才肯把焦点落上来）
+                // 图片数量文案与评论区保持一致
                 role = Role.Image
-                contentDescription = "查看图片，共${imagePreviewerState.imageModels.size}张"
+                contentDescription = listOf("查看图片", imageCountText(imagePreviewerState.imageModels.size))
+                    .filter { it.isNotEmpty() }
+                    .joinToString("，")
                 onClick(label = "关闭") {
                     scope.launch {
                         imagePreviewerState.previewerState.exitTransform()

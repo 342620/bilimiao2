@@ -97,7 +97,11 @@ class MainUi(
 
     var mMaskView = view<View> {
         setBackgroundResource(R.color.black)
+        // 遮罩只是"点空白关掉抽屉/面板"的触摸层：保留点击以吞掉触摸，
+        // 但对读屏隐藏，否则会多出一个没有任何标签、也没有任何效果的"按钮"焦点
         setOnClickListener {  }
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        isFocusable = false
         alpha = 0f
         visibility = View.GONE
     }

@@ -5,6 +5,7 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withLink
 import cn.a10miaomiao.bilimiao.compose.common.foundation.AnnotatedTextNode
+import cn.a10miaomiao.bilimiao.compose.components.image.imageCountText
 
 /**
  * 评论项无障碍合并语义的纯函数
@@ -31,9 +32,9 @@ object ReplyItemSemantics {
         if (content.isNotBlank()) {
             parts.add(content)
         }
-        when {
-            pictureCount == 1 -> parts.add("含一张图片")
-            pictureCount > 1 -> parts.add("共${pictureCount}张图片")
+        val imageText = imageCountText(pictureCount)
+        if (imageText.isNotEmpty()) {
+            parts.add(imageText)
         }
         parts.add(if (isLike) "已点赞$like" else "点赞$like")
         parts.add("${replyCount}条回复")
@@ -77,15 +78,9 @@ object ReplyItemSemantics {
                 }
             }
             // 图片
-            when {
-                pictureCount == 1 -> {
-                    append(", ")
-                    append("含一张图片")
-                }
-                pictureCount > 1 -> {
-                    append(", ")
-                    append("共${pictureCount}张图片")
-                }
+            if (pictureCount > 0) {
+                append(", ")
+                append(imageCountText(pictureCount))
             }
             // 点赞
             append(", ")
