@@ -26,18 +26,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.text
-import androidx.compose.ui.semantics.textSubstitution
-import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import cn.a10miaomiao.bilimiao.compose.R
 import cn.a10miaomiao.bilimiao.compose.assets.BilimiaoIcons
 import cn.a10miaomiao.bilimiao.compose.assets.bilimiaoicons.Common
@@ -74,6 +69,23 @@ fun VideoItemBox(
                 else clickable(onClick = onClick)
             }
             .then(modifier)
+            // 卡片本身就是一个合并的无障碍焦点，这里清掉子节点语义，
+            // 只保留一条按固定顺序拼好的播报文案，避免同一个焦点被念两遍
+            .clearAndSetSemantics {
+                contentDescription = videoItemContentDescription(
+                    title = title,
+                    upperName = upperName,
+                    playNum = playNum,
+                    damukuNum = damukuNum,
+                    duration = duration,
+                )
+                if (onClick != null) {
+                    onClick(label = null) {
+                        onClick.invoke()
+                        true
+                    }
+                }
+            }
     ) {
         if (pic != null) {
             Box(
@@ -105,9 +117,6 @@ fun VideoItemBox(
                             text = duration,
                             color = Color.White,
                             style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.semantics {
-                                contentDescription = ",时长$duration"
-                            }
                         )
                     }
                 }
@@ -126,8 +135,7 @@ fun VideoItemBox(
             modifier = Modifier
                 .weight(1f)
                 .height(85.dp)
-                .padding(start = 5.dp)
-                .zIndex(-1f), // 适配无障碍功能，优先播报视频标题
+                .padding(start = 5.dp),
         ) {
             if (title != null) {
                 if (isHtml) {
@@ -167,10 +175,7 @@ fun VideoItemBox(
                         contentDescription = null,
                     )
                     Text(
-                        modifier = Modifier.padding(start = 2.dp)
-                            .semantics {
-                                contentDescription = ",up主$upperName"
-                            },
+                        modifier = Modifier.padding(start = 2.dp),
                         text = upperName,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall,
@@ -201,10 +206,7 @@ fun VideoItemBox(
                         contentDescription = null,
                     )
                     Text(
-                        modifier = Modifier.padding(start = 2.dp)
-                            .semantics {
-                                contentDescription = ",播放$playNum"
-                            },
+                        modifier = Modifier.padding(start = 2.dp),
                         text = NumberUtil.converString(playNum),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall,
@@ -217,10 +219,7 @@ fun VideoItemBox(
                         contentDescription = null,
                     )
                     Text(
-                        modifier = Modifier.padding(start = 2.dp)
-                            .semantics {
-                                contentDescription = ",弹幕$damukuNum"
-                            },
+                        modifier = Modifier.padding(start = 2.dp),
                         text = NumberUtil.converString(damukuNum),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodySmall,
@@ -230,6 +229,27 @@ fun VideoItemBox(
         }
 
     }
+}
+
+
+/**
+ * 卡片无障碍播报文案，固定顺序：标题、播放、弹幕、时长、UP主。
+ * UP主放在最后，避免 TalkBack 先把 UP主念出来。
+ */
+private fun videoItemContentDescription(
+    title: String?,
+    upperName: String?,
+    playNum: String?,
+    damukuNum: String?,
+    duration: String?,
+): String {
+    val parts = mutableListOf<String>()
+    title?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
+    playNum?.takeIf { it.isNotBlank() }?.let { parts.add("播放${NumberUtil.converString(it)}") }
+    damukuNum?.takeIf { it.isNotBlank() }?.let { parts.add("弹幕${NumberUtil.converString(it)}") }
+    duration?.takeIf { it.isNotBlank() }?.let { parts.add("时长$it") }
+    upperName?.takeIf { it.isNotBlank() }?.let { parts.add("UP主$it") }
+    return parts.joinToString(", ")
 }
 
 

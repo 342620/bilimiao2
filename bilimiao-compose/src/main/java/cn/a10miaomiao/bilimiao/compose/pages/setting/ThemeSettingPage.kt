@@ -21,10 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
@@ -164,12 +160,7 @@ private fun ThemeSettingPageContent(
                                 viewModel.setDarkMode(mode.first)
                             },
                             selected = index == themeState.darkMode,
-                            modifier = Modifier
-                                .width(IntrinsicSize.Max)
-                                .clearAndSetSemantics {
-                                    contentDescription = mode.second
-                                    selected = index == themeState.darkMode
-                                },
+                            modifier = Modifier.width(IntrinsicSize.Max),
                         ) {
                             Text(
                                 text = mode.second,
@@ -206,12 +197,7 @@ private fun ThemeSettingPageContent(
                                 viewModel.setAppBarType(type.first)
                             },
                             selected = index == themeState.appBarType,
-                            modifier = Modifier
-                                .width(IntrinsicSize.Max)
-                                .clearAndSetSemantics {
-                                    contentDescription = type.second
-                                    selected = index == themeState.appBarType
-                                },
+                            modifier = Modifier.width(IntrinsicSize.Max),
                         ) {
                             Text(
                                 text = type.second,

@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -181,7 +181,10 @@ private fun DialogFullScreen(
                             onTap = handleBackPress
                         )
                         .semantics {
-                            contentDescription = "关闭"
+                            // 遮罩只是“点空白关闭”的触摸层：对读屏隐藏。
+                            // 之前挂 contentDescription 既没有真正可执行的动作（读屏不认它是按钮），
+                            // 又会因为铺满全屏而把面板里的内容顶开
+                            invisibleToUser()
                         }
                 )
                 AnimatedVisibility(

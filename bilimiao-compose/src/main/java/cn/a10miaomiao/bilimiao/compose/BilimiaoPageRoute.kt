@@ -8,6 +8,14 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
@@ -18,6 +26,7 @@ import androidx.navigation.serialization.decodeArguments
 import cn.a10miaomiao.bilimiao.compose.animation.materialFadeThroughIn
 import cn.a10miaomiao.bilimiao.compose.animation.materialFadeThroughOut
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
+import cn.a10miaomiao.bilimiao.compose.common.mypage.LocalPagePaneTitle
 import cn.a10miaomiao.bilimiao.compose.pages.BlankPage
 import cn.a10miaomiao.bilimiao.compose.pages.TestPage
 import cn.a10miaomiao.bilimiao.compose.pages.auth.H5LoginPage
@@ -76,6 +85,9 @@ import cn.a10miaomiao.bilimiao.compose.pages.web.WebPage
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
 import kotlinx.serialization.serializer
 import kotlin.reflect.KType
+
+/** 页面没有设置标题时，读屏播报的兜底窗口标题 */
+private const val DEFAULT_PAGE_PANE_TITLE = "bilimiao"
 
 class BilimiaoPageRoute (
     val builder: NavGraphBuilder
@@ -359,7 +371,19 @@ class BilimiaoPageRoute (
             val bundle = backStackEntry.arguments ?: Bundle()
             val typeMap = backStackEntry.destination.arguments.mapValues { it.value.type }
             val page = serializer.decodeArguments(bundle, typeMap)
-            page.Content()
+            // 每个目的地各持一份窗口标题状态：进入新页面时读屏能播报本页标题，
+            // 不再依赖“最后注册的页面配置”，避免有的页面没标题、有的页面标题来回变
+            val pagePaneTitle = remember { mutableStateOf("") }
+            val paneTitleText = pagePaneTitle.value.ifEmpty { DEFAULT_PAGE_PANE_TITLE }
+            CompositionLocalProvider(LocalPagePaneTitle provides pagePaneTitle) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .semantics { paneTitle = paneTitleText },
+                ) {
+                    page.Content()
+                }
+            }
         }
     }
 }

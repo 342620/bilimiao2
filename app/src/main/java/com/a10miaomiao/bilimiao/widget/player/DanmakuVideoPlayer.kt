@@ -642,12 +642,18 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
 
     override fun setStateAndUi(state: Int) {
         super.setStateAndUi(state)
-        val playBtnImageRes = if (state == CURRENT_STATE_PLAYING) {
+        val isPlaying = state == CURRENT_STATE_PLAYING
+        val playBtnImageRes = if (isPlaying) {
             R.drawable.bili_player_play_can_pause
         } else {
             R.drawable.bili_player_play_can_play
         }
         mButtomPlay.setImageResource(playBtnImageRes)
+        // 无障碍：播放按钮读的是“按下去会做什么”，播放中读“暂停”，其余状态读“播放”。
+        // 放在这里统一同步，自动播放、缓冲、外部暂停等路径都能跟着更新
+        val playButtonLabel = if (isPlaying) "暂停" else "播放"
+        mStartButton.contentDescription = playButtonLabel
+        mButtomPlay.contentDescription = playButtonLabel
         videoPlayerCallBack?.setStateAndUi(state)
     }
 
@@ -770,13 +776,11 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
             if (enabledAudioFocus) {
                 requestAudioFocus()
             }
-            mStartButton.contentDescription = "暂停"
         } else if (mCurrentState == CURRENT_STATE_PAUSE) {
             danmakuOnPause()
             if (enabledAudioFocus) {
                 abandonAudioFocus()
             }
-            mStartButton.contentDescription = "播放"
         }
     }
 

@@ -156,6 +156,7 @@ class DrawerBehaviorDelegate(
             state
         }
         parent.changedDrawerState(dragState)
+        updateDrawerAccessibility()
         if (dragState == STATE_DRAGGING) {
             drawerView.visibility = View.VISIBLE
             parent.setMaskViewVisibility(View.VISIBLE)
@@ -222,7 +223,43 @@ class DrawerBehaviorDelegate(
         return targetState == STATE_EXPANDED
     }
 
+    /**
+     * 抽屉的无障碍状态同步：
+     * 展开时给抽屉设置窗口标题（TalkBack 会播报“菜单”），同时把底层内容移出无障碍树，
+     * 避免无障碍焦点穿透到抽屉后面的界面；收起时恢复原状。
+     */
+    private fun updateDrawerAccessibility() {
+        val expanded = dragState != STATE_COLLAPSED
+        ViewCompat.setAccessibilityPaneTitle(
+            drawerView,
+            if (expanded) DRAWER_PANE_TITLE else null,
+        )
+        drawerView.importantForAccessibility = if (expanded) {
+            View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        } else {
+            View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+        }
+        val contentAccessibility = if (expanded) {
+            View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+        } else {
+            View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
+        }
+        listOfNotNull(
+            parent.content,
+            parent.subContent,
+            parent.appBar,
+            parent.player,
+            parent.bottomSheet,
+        ).forEach {
+            it.importantForAccessibility = contentAccessibility
+        }
+    }
+
     companion object {
+
+        /** 抽屉展开时读屏播报的窗口标题 */
+        private const val DRAWER_PANE_TITLE = "菜单"
+
         const val STATE_DRAGGING = 1
 
         const val STATE_SETTLING = 2

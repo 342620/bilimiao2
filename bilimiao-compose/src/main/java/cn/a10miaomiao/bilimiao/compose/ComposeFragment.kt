@@ -55,8 +55,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.UriHandler
-import androidx.compose.ui.semantics.paneTitle
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -195,13 +193,10 @@ class ComposeFragment : Fragment(), MyPage, DIAware, OnBackPressedDispatcherOwne
                                     MyImagePreviewer(state, innerPadding)
                                 }
                             ) {
-                                val currentConfig by pageConfigState.collectConfigAsState()
-                                val paneTitleText = currentConfig.title.ifEmpty { "bilimiao" }
                                 Box(
                                     modifier = Modifier
                                         .nestedScroll(connection)
-                                        .background(MaterialTheme.colorScheme.background)
-                                        .semantics { paneTitle = paneTitleText },
+                                        .background(MaterialTheme.colorScheme.background),
                                 ) {
                                     MyNavHost(composeNav, HomePage)
                                 }

@@ -20,12 +20,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
@@ -56,6 +59,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.kongzue.dialogx.dialogs.PopTip
+import kotlinx.coroutines.launch
 import org.kodein.di.compose.rememberInstance
 import java.io.File
 
@@ -155,6 +159,7 @@ fun MyImagePreviewer(
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val activity: FragmentActivity by rememberInstance()
+    val scope = rememberCoroutineScope()
     val controller = remember(imagePreviewerState) {
         MyImagePreviewerController(activity, imagePreviewerState)
     }
@@ -188,9 +193,20 @@ fun MyImagePreviewer(
         onMenuItemClick = controller::menuItemClick,
     )
     ImagePreviewer(
-        modifier = Modifier.semantics {
-            contentDescription = "图片预览"
-        },
+        modifier = Modifier
+            .fillMaxSize()
+            .semantics {
+                // 展开大图时给整层一个可聚焦的无障碍节点：
+                // role 让它被识别为图片，onClick 让它具备可执行动作（TalkBack 才肯把焦点落上来）
+                role = Role.Image
+                contentDescription = "查看图片，共${imagePreviewerState.imageModels.size}张"
+                onClick(label = "关闭") {
+                    scope.launch {
+                        imagePreviewerState.previewerState.exitTransform()
+                    }
+                    true
+                }
+            },
         contentPadding = contentPadding,
         state = imagePreviewerState.previewerState,
         imageLoader = { page ->

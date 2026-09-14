@@ -18,10 +18,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
@@ -181,10 +177,6 @@ private fun SearchResultPageContent(
                     },
                     selected = pagerState.currentPage == index,
                     onClick = { combinedTabClick(index) },
-                    modifier = Modifier.clearAndSetSemantics {
-                        contentDescription = tab.name
-                        selected = pagerState.currentPage == index
-                    },
                 )
             }
         }

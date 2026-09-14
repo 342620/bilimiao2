@@ -151,34 +151,40 @@ private fun DynamicAllAndVideoWrap(
         modifier = Modifier.fillMaxSize()
     ) {
         if (isMiniUpList) {
-            TabRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
-                selectedTabIndex = pagerState.currentPage,
-                indicator = { positions ->
-                    TabRowDefaults.PrimaryIndicator(
-                        Modifier.pagerTabIndicatorOffset(pagerState, positions),
-                    )
-                },
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                tabs.forEachIndexed { index, tab ->
-                    Tab(
-                        text = {
-                            Text(
-                                text = tab.second,
-                                color = if (index == pagerState.currentPage) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onBackground
-                                }
-                            )
-                        },
-                        selected = pagerState.currentPage == index,
-                        onClick = { combinedTabClick(index) },
-                    )
+                TabRow(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(windowInsets.toPaddingValues(bottom = 0.dp)),
+                    selectedTabIndex = pagerState.currentPage,
+                    indicator = { positions ->
+                        TabRowDefaults.PrimaryIndicator(
+                            Modifier.pagerTabIndicatorOffset(pagerState, positions),
+                        )
+                    },
+                ) {
+                    tabs.forEachIndexed { index, tab ->
+                        Tab(
+                            text = {
+                                Text(
+                                    text = tab.second,
+                                    color = if (index == pagerState.currentPage) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onBackground
+                                    }
+                                )
+                            },
+                            selected = pagerState.currentPage == index,
+                            onClick = { combinedTabClick(index) },
+                        )
+                    }
                 }
-                // 右侧“最常访问”按钮
+                // “最常访问”放在 TabRow 外面：它不是标签页，
+                // 混在标签行里会被读屏当成第三个标签、多一层焦点
                 TextButton(
                     onClick = toUpper,
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),

@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +44,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
@@ -168,15 +173,15 @@ fun SearchInputDialog(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        FilterChip(
-                            selected = mode == 0,
+                        SearchModeChip(
+                            text = "全站搜索",
+                            isSelected = mode == 0,
                             onClick = { mode = 0 },
-                            label = { Text("全站搜索") }
                         )
-                        FilterChip(
-                            selected = mode == 1,
+                        SearchModeChip(
+                            text = selfSearchName ?: "当前页内",
+                            isSelected = mode == 1,
                             onClick = { mode = 1 },
-                            label = { Text(selfSearchName ?: "当前页内") }
                         )
                         Spacer(modifier = Modifier.weight(1f))
                     }
@@ -262,6 +267,36 @@ fun SearchInputDialog(
             dismissButton = {
                 TextButton(onClick = { showClearAll = false }) { Text("取消") }
             }
+        )
+    }
+}
+
+/**
+ * 搜索模式 chip。
+ * FilterChip 自身已经会播报“已选中”，再叠一层就会念两遍；
+ * 这里用 clearAndSetSemantics 覆盖整棵子树的语义，只保留一条标签和一次选中态，
+ * 外观仍是原来的 Material FilterChip，点击行为不变。
+ */
+@Composable
+private fun SearchModeChip(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.clearAndSetSemantics {
+            contentDescription = text
+            selected = isSelected
+            onClick(label = null) {
+                onClick()
+                true
+            }
+        },
+    ) {
+        FilterChip(
+            selected = isSelected,
+            onClick = onClick,
+            label = { Text(text) },
         )
     }
 }

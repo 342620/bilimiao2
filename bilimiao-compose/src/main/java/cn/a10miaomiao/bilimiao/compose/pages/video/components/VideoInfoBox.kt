@@ -25,6 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -122,32 +124,49 @@ fun VideoInfoBox(
                 vertical = 5.dp,
                 horizontal = 10.dp,
             ),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.onBackground,
-                imageVector = BilimiaoIcons.Common.Playnum,
-                contentDescription = "播放量"
-            )
-            Text(
-                modifier = Modifier.padding(start = 2.dp),
-                text = NumberUtil.converString(stat?.view ?: 0),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall,
-            )
+            // 每个“图标 + 数字”合并成一个无障碍焦点，读成“播放量 1234”，
+            // 避免标签和数量被拆成两个焦点
+            Row(
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = "播放量 ${NumberUtil.converString(stat?.view ?: 0)}"
+                },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    imageVector = BilimiaoIcons.Common.Playnum,
+                    contentDescription = null,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 2.dp),
+                    text = NumberUtil.converString(stat?.view ?: 0),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             Spacer(modifier = Modifier.width(10.dp))
-            Icon(
-                modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.onBackground,
-                imageVector = BilimiaoIcons.Common.Danmukunum,
-                contentDescription = "弹幕数"
-            )
-            Text(
-                modifier = Modifier.padding(start = 2.dp),
-                text =  NumberUtil.converString(stat?.danmaku ?: 0),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall,
-            )
+            Row(
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = "弹幕数 ${NumberUtil.converString(stat?.danmaku ?: 0)}"
+                },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    imageVector = BilimiaoIcons.Common.Danmukunum,
+                    contentDescription = null,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 2.dp),
+                    text = NumberUtil.converString(stat?.danmaku ?: 0),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = NumberUtil.converCTime(arc.pubdate),

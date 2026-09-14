@@ -26,6 +26,8 @@ class MenuCheckableItemView @JvmOverloads constructor(
         }
 
     private fun updateChecked() {
+        // 无障碍：把选中状态同步给 TalkBack，焦点落上去时才会播报“已选中”
+        isSelected = checked
         if (checked) {
             setBackgroundResource(R.drawable.shape_menu_item_checked)
             ui.title.setTextColor(themeColor)

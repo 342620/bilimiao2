@@ -32,8 +32,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -387,8 +392,15 @@ internal fun UserSeasonDetailContent(
                         .clickable {
                             viewModel.changeAutoPlay(!isAutoPlay)
                         }
-                        .semantics {
-                            contentDescription = "自动连播，${if (isAutoPlay) "已开启" else "已关闭"}"
+                        .clearAndSetSemantics {
+                            // 一个焦点、一条文案；开关状态只由 toggleableState 表达，避免重复朗读
+                            contentDescription = "自动连播"
+                            role = Role.Switch
+                            toggleableState = if (isAutoPlay) ToggleableState.On else ToggleableState.Off
+                            onClick(label = null) {
+                                viewModel.changeAutoPlay(!isAutoPlay)
+                                true
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

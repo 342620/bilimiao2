@@ -62,6 +62,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -470,18 +474,48 @@ private fun SearchModeSelector(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FilterChip(
-            selected = mode == 0,
+        SearchModeChip(
+            text = "全站搜索",
+            isSelected = mode == 0,
             onClick = { onModeChange(0) },
-            label = { Text("全站搜索") }
         )
         pageSearchMethod?.let {
-            FilterChip(
-                selected = mode == 1,
+            SearchModeChip(
+                text = it.name,
+                isSelected = mode == 1,
                 onClick = { onModeChange(1) },
-                label = { Text(it.name) }
             )
         }
         Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+/**
+ * 搜索模式 chip。
+ * FilterChip 自身已经会播报“已选中”，再叠一层就会念两遍；
+ * 这里用 clearAndSetSemantics 覆盖整棵子树的语义，只保留一条标签和一次选中态，
+ * 外观仍是原来的 Material FilterChip，点击行为不变。
+ */
+@Composable
+private fun SearchModeChip(
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.clearAndSetSemantics {
+            contentDescription = text
+            selected = isSelected
+            onClick(label = null) {
+                onClick()
+                true
+            }
+        },
+    ) {
+        FilterChip(
+            selected = isSelected,
+            onClick = onClick,
+            label = { Text(text) },
+        )
     }
 }

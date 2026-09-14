@@ -38,7 +38,7 @@ fun BiliLoadingBox(modifier: Modifier) {
                 .widthIn(max = 150.dp)
                 .aspectRatio(1f),
             painter = if (i == 0) img1 else img2,
-            contentDescription = "loading",
+            contentDescription = "加载中",
         )
     }
 }

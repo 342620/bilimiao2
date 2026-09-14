@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,10 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.unit.dp
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toHct
@@ -55,15 +52,14 @@ fun ThemeColorButton(
                 height = 100.dp,
             )
             .aspectRatio(1f)
-            .semantics {
-                this.selected = selected
-                this.role = Role.Button
-                contentDescription = if (selected) "已选中$colorName" else colorName
-            },
+            .selectable(
+                selected = selected,
+                role = Role.RadioButton,
+                onClick = onClick,
+            ),
         shape = RoundedCornerShape(16.dp),
         color = cardColor,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-        onClick = onClick,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

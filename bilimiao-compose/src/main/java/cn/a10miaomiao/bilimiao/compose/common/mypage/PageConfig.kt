@@ -83,26 +83,39 @@ class PageConfigState {
 internal val LocalPageConfigState: ProvidableCompositionLocal<PageConfigState?> =
     compositionLocalOf { null }
 
+/**
+ * 当前页面容器的无障碍“窗口标题”状态。
+ * 每个导航目的地各持一份，由页面里的 PageConfig(title = ...) 写入，
+ * 目的地容器再把它设成 paneTitle，这样进入新页面时读屏能播报本页标题。
+ */
+internal val LocalPagePaneTitle: ProvidableCompositionLocal<MutableState<String>?> =
+    compositionLocalOf { null }
+
 @Composable
 fun PageConfig(
     title: String = "",
+    paneTitle: String = title,
     menu: MyPageMenu? = null,
     search: SearchConfigInfo? = null
 ): Int {
     val pageConfigInfo = LocalPageConfigState.current ?: return -1
+    val pagePaneTitle = LocalPagePaneTitle.current
     val configId = remember {
         _configId++
     }
     DisposableEffect(
-        title, menu, search
+        title, paneTitle, menu, search
     ) {
         pageConfigInfo.addConfig(configId) {
             it.title = title
             it.menu = menu
             it.search = search
         }
+        pagePaneTitle?.value = paneTitle
         onDispose {
             pageConfigInfo.removeConfig(configId)
+            // 退出页面时清空，避免下一个页面还没设置标题时读到上一页的残留
+            pagePaneTitle?.value = ""
         }
     }
     return configId

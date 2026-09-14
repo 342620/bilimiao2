@@ -122,8 +122,10 @@ class PlayerController(
             initPlayerSetting()
         }
 
-        // 无障碍适配
-        contentDescription = "播放窗口"
+        // 无障碍适配：这里不再挂 contentDescription。
+        // 播放画面区域只需要一个焦点（GSY 的 surface_container 上的“展开/收起播控栏”），
+        // 挂在这里会多出一个读作“播放窗口”的冗余焦点。
+        // 下面的委托保留：触摸浏览离开播放器时把播控栏显示出来
         accessibilityDelegate = object : View.AccessibilityDelegate() {
             override fun sendAccessibilityEvent(host: View, eventType: Int) {
                 super.sendAccessibilityEvent(host, eventType)

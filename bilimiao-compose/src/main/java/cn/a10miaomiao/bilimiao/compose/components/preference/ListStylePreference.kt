@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -28,10 +29,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.zhanghai.compose.preference.Preference
@@ -89,18 +86,17 @@ fun ListStylePreference(
             ) {
                 Surface(
                     modifier = Modifier.weight(1f)
-                        .semantics {
-                            this.selected = value == 0
-                            this.role = Role.Button
-                            contentDescription = if (value == 0) "已选中列表式" else "列表式"
-                        },
+                        .selectable(
+                            selected = value == 0,
+                            role = Role.RadioButton,
+                            onClick = {
+                                onValueChange(0)
+                            },
+                        ),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         .takeIf { value == 0 },
                     color = MaterialTheme.colorScheme.surfaceContainer,
-                    onClick = {
-                        onValueChange(0)
-                    }
                 ) {
                     Column(
                         modifier = Modifier
@@ -136,18 +132,17 @@ fun ListStylePreference(
                 Spacer(modifier = Modifier.width(8.dp))
                 Surface(
                     modifier = Modifier.weight(1f)
-                        .semantics {
-                            this.selected = value == 1
-                            this.role = Role.Button
-                            contentDescription = if (value == 1) "已选中卡片式" else "卡片式"
-                        },
+                        .selectable(
+                            selected = value == 1,
+                            role = Role.RadioButton,
+                            onClick = {
+                                onValueChange(1)
+                            },
+                        ),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         .takeIf { value == 1 },
                     color = MaterialTheme.colorScheme.surfaceContainer,
-                    onClick = {
-                        onValueChange(1)
-                    }
                 ) {
                     Column(
                         modifier = Modifier

@@ -68,7 +68,7 @@ fun DynamicMiniUpperList(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = "Back"
+                        contentDescription = null
                     )
                     Spacer(modifier = Modifier.size(4.dp))
                     Text(
@@ -147,7 +147,7 @@ fun DynamicMiniUpperList(
                         )
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                            contentDescription = "more"
+                            contentDescription = null
                         )
                     }
                 }

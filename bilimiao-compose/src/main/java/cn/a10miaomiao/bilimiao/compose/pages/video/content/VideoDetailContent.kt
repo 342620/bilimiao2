@@ -99,7 +99,10 @@ fun VideoDetailContent(
         ?: detailData.reqUser ?: bilibili.app.view.v1.ReqUser()
     if (isActive) {
         val pageConfig = PageConfig(
+            // 顶部栏仍显示 AV/BV 号，但读屏播报改用视频标题，
+            // 避免进入详情页时先念一串编号
             title = "AV${arcData.aid}\n/\n${viewModel.getBvid()}",
+            paneTitle = arcData.title,
             menu = rememberMyMenu(listPosition, videoReqUser.favorite, videoStat?.share) {
                 myItem {
                     key = MenuKeys.more

@@ -169,7 +169,7 @@ fun DynamicUpperList(
                     )
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                        contentDescription = "more"
+                        contentDescription = null
                     )
                 }
             }

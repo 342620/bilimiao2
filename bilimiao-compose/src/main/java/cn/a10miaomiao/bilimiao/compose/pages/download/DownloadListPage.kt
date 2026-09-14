@@ -18,10 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -318,10 +314,6 @@ internal fun DownloadListPageContent(
                     label = {
                         Text(text = "全部")
                     },
-                    modifier = Modifier.clearAndSetSemantics {
-                        contentDescription = "全部"
-                        selected = status == 0
-                    }
                 )
                 FilterChip(
                     selected = status == 1,
@@ -331,10 +323,6 @@ internal fun DownloadListPageContent(
                     label = {
                         Text(text = "下载中")
                     },
-                    modifier = Modifier.clearAndSetSemantics {
-                        contentDescription = "下载中"
-                        selected = status == 1
-                    }
                 )
                 FilterChip(
                     selected = status == 2,
@@ -344,10 +332,6 @@ internal fun DownloadListPageContent(
                     label = {
                         Text(text = "下载完成")
                     },
-                    modifier = Modifier.clearAndSetSemantics {
-                        contentDescription = "下载完成"
-                        selected = status == 2
-                    }
                 )
             }
         }

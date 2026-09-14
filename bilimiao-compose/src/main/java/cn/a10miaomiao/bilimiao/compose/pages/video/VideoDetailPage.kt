@@ -50,6 +50,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.invisibleToUser
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.LayoutDirection
@@ -382,6 +384,15 @@ private fun VideoDetailPageContent(
                     key = { index -> tabs[index].first },
                 ) { index ->
                     val tab = tabs[index]
+                    // 非当前页对无障碍隐藏：翻页容器会预置相邻页，若它们仍在无障碍树里，
+                    // 焦点滑到标签栏附近时会被带到相邻页并让 pager 跟着翻过去
+                    Box(
+                        modifier = if (index == pagerState.currentPage) {
+                            Modifier
+                        } else {
+                            Modifier.semantics { invisibleToUser() }
+                        },
+                    ) {
                     when (tab.first) {
                         "detail" -> {
                             VideoDetailContent(
@@ -415,6 +426,7 @@ private fun VideoDetailPageContent(
                                 usePageConfig = orientation == Orientation.Vertical,
                             )
                         }
+                    }
                     }
                 }
             }
