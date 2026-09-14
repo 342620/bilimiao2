@@ -96,7 +96,7 @@ fun MiniVideoItemBox(
                         modifier = Modifier.size(16.dp),
                         tint = Color.White,
                         imageVector = BilimiaoIcons.Common.Playnum,
-                        contentDescription = "播放量"
+                        contentDescription = "播放"
                     )
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
@@ -109,7 +109,7 @@ fun MiniVideoItemBox(
                         modifier = Modifier.size(16.dp),
                         tint = Color.White,
                         imageVector = BilimiaoIcons.Common.Danmukunum,
-                        contentDescription = "弹幕数"
+                        contentDescription = "弹幕"
                     )
                     Text(
                         modifier = Modifier.padding(start = 2.dp),

@@ -126,12 +126,12 @@ fun VideoInfoBox(
             ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // 每个“图标 + 数字”合并成一个无障碍焦点，读成“播放量 1234”。
+            // 每个“图标 + 数字”合并成一个无障碍焦点，读成“播放1234”。
             // 用 clearAndSetSemantics 直接覆盖子树：否则合并进来的数字文本会和
-            // 描述各念一遍，变成“播放量 1234，1234”
+            // 描述各念一遍，变成“播放1234，1234”
             Row(
                 modifier = Modifier.clearAndSetSemantics {
-                    contentDescription = "播放量 ${NumberUtil.converString(stat?.view ?: 0)}"
+                    contentDescription = "播放${NumberUtil.converString(stat?.view ?: 0)}"
                 },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -151,7 +151,7 @@ fun VideoInfoBox(
             Spacer(modifier = Modifier.width(10.dp))
             Row(
                 modifier = Modifier.clearAndSetSemantics {
-                    contentDescription = "弹幕数 ${NumberUtil.converString(stat?.danmaku ?: 0)}"
+                    contentDescription = "弹幕${NumberUtil.converString(stat?.danmaku ?: 0)}"
                 },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
