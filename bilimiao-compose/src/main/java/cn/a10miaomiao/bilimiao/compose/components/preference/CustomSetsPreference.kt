@@ -123,7 +123,7 @@ fun CustomSetsPreference(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Add,
-                            contentDescription = "add"
+                            contentDescription = "添加"
                         )
                     }
                 }

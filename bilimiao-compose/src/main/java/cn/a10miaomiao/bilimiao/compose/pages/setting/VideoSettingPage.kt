@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -179,7 +181,7 @@ private fun VideoSettingPageContent(
             preferenceCategory(
                 key = "player",
                 title = {
-                    Text("播放器设置")
+                    Text("播放器设置", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -206,7 +208,7 @@ private fun VideoSettingPageContent(
             preferenceCategory(
                 key = "source",
                 title = {
-                    Text("视频源设置")
+                    Text("视频源设置", modifier = Modifier.semantics { heading() })
                 }
             )
             listPreference(
@@ -235,7 +237,7 @@ private fun VideoSettingPageContent(
             preferenceCategory(
                 key = "control",
                 title = {
-                    Text("播放控制设置")
+                    Text("播放控制设置", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -372,7 +374,7 @@ private fun VideoSettingPageContent(
             preferenceCategory(
                 key = "small",
                 title = {
-                    Text(text = "横屏状态小屏设置")
+                    Text("横屏状态小屏设置", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -415,7 +417,7 @@ private fun VideoSettingPageContent(
             preferenceCategory(
                 key = "subtitle",
                 title = {
-                    Text("字幕设置")
+                    Text("字幕设置", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(

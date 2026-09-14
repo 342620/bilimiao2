@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import cn.a10miaomiao.bilimiao.compose.common.localContainerView
 import cn.a10miaomiao.bilimiao.compose.common.preference.rememberPreferenceFlow
 import cn.a10miaomiao.bilimiao.compose.components.preference.sliderIntPreference
@@ -63,7 +65,7 @@ internal fun DanmakuDisplaySettingContent(
             preferenceCategory(
                 key = "display",
                 title = {
-                    Text(text = "显示")
+                    Text("显示", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -174,7 +176,7 @@ internal fun DanmakuDisplaySettingContent(
             preferenceCategory(
                 key = "font",
                 title = {
-                    Text(text = "字体")
+                    Text("字体", modifier = Modifier.semantics { heading() })
                 }
             )
             // 字体大小
@@ -209,7 +211,7 @@ internal fun DanmakuDisplaySettingContent(
             preferenceCategory(
                 key = "speed",
                 title = {
-                    Text(text = "速度")
+                    Text("速度", modifier = Modifier.semantics { heading() })
                 }
             )
             // 弹幕速度

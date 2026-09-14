@@ -31,6 +31,8 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -405,7 +407,7 @@ private fun AboutPageContent(
                 preferenceCategory(
                     key = "me",
                     title = {
-                        Text("基本信息")
+                        Text("基本信息", modifier = Modifier.semantics { heading() })
                     }
                 )
                 preference(
@@ -434,7 +436,7 @@ private fun AboutPageContent(
                 preferenceCategory(
                     key = "url",
                     title = {
-                        Text("开源链接")
+                        Text("开源链接", modifier = Modifier.semantics { heading() })
                     }
                 )
                 preference(
@@ -466,7 +468,7 @@ private fun AboutPageContent(
                 preferenceCategory(
                     key = "contributors",
                     title = {
-                        Text("贡献者")
+                        Text("贡献者", modifier = Modifier.semantics { heading() })
                     }
                 )
 

@@ -15,6 +15,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -203,7 +205,7 @@ private fun SettingPageContent(
             preferenceCategory(
                 key = "general",
                 title = {
-                    Text( "常规")
+                    Text("常规", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -314,7 +316,7 @@ private fun SettingPageContent(
             preferenceCategory(
                 key = "other",
                 title = {
-                    Text( "其它")
+                    Text("其它", modifier = Modifier.semantics { heading() })
                 }
             )
             preference(

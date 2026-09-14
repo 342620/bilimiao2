@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -129,7 +131,7 @@ private fun DanmakuSettingPageContent(
             preferenceCategory(
                 key = "0",
                 title = {
-                    Text("基础设置")
+                    Text("基础设置", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -163,7 +165,7 @@ private fun DanmakuSettingPageContent(
             preferenceCategory(
                 key = "1",
                 title = {
-                    Text("显示设置")
+                    Text("显示设置", modifier = Modifier.semantics { heading() })
                 }
             )
             preference(

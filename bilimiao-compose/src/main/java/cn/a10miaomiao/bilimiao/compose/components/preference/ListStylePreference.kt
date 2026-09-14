@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -28,7 +28,8 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.zhanghai.compose.preference.Preference
@@ -86,13 +87,14 @@ fun ListStylePreference(
             ) {
                 Surface(
                     modifier = Modifier.weight(1f)
-                        .selectable(
-                            selected = value == 0,
-                            role = Role.RadioButton,
-                            onClick = {
-                                onValueChange(0)
-                            },
-                        ),
+                        // 无障碍：选中状态只走 stateDescription，
+                        // 用 selectable 的话 Compose 会再映射成控件状态，导致选中态念两遍
+                        .clickable {
+                            onValueChange(0)
+                        }
+                        .semantics {
+                            stateDescription = if (value == 0) "已选中" else "未选中"
+                        },
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         .takeIf { value == 0 },
@@ -132,13 +134,13 @@ fun ListStylePreference(
                 Spacer(modifier = Modifier.width(8.dp))
                 Surface(
                     modifier = Modifier.weight(1f)
-                        .selectable(
-                            selected = value == 1,
-                            role = Role.RadioButton,
-                            onClick = {
-                                onValueChange(1)
-                            },
-                        ),
+                        // 同上：选中状态只用 stateDescription，避免念两遍
+                        .clickable {
+                            onValueChange(1)
+                        }
+                        .semantics {
+                            stateDescription = if (value == 1) "已选中" else "未选中"
+                        },
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
                         .takeIf { value == 1 },

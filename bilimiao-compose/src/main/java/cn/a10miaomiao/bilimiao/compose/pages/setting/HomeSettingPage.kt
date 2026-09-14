@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -97,7 +99,7 @@ private fun HomeSettingPageContent(
             preferenceCategory(
                 key = "top_nav",
                 title = {
-                    Text("首页顶部设置")
+                    Text("首页顶部设置", modifier = Modifier.semantics { heading() })
                 }
             )
             listPreference(
@@ -134,7 +136,7 @@ private fun HomeSettingPageContent(
             preferenceCategory(
                 key = "popular",
                 title = {
-                    Text("热门设置")
+                    Text("热门设置", modifier = Modifier.semantics { heading() })
                 }
             )
             switchPreference(
@@ -151,7 +153,7 @@ private fun HomeSettingPageContent(
             preferenceCategory(
                 key = "recommend",
                 title = {
-                    Text("推荐设置")
+                    Text("推荐设置", modifier = Modifier.semantics { heading() })
                 }
             )
             listStylePreference(
