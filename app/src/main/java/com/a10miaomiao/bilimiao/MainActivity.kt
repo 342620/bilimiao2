@@ -2,6 +2,7 @@ package com.a10miaomiao.bilimiao
 
 import android.Manifest
 import android.app.Activity
+import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -41,9 +42,11 @@ import cn.a10miaomiao.bilimiao.compose.ComposeFragment
 import cn.a10miaomiao.bilimiao.compose.StartViewWrapper
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
 import cn.a10miaomiao.bilimiao.compose.base.PageSearchMethod
+import cn.a10miaomiao.bilimiao.compose.pages.link.BiliLinkPage
 import cn.a10miaomiao.bilimiao.compose.pages.search.SearchResultPage
 import com.a10miaomiao.bilimiao.comm.BiliGeetestUtilImpl
 import com.a10miaomiao.bilimiao.comm.BilimiaoStatService
+import com.a10miaomiao.bilimiao.comm.link.BiliLinkParser
 import com.a10miaomiao.bilimiao.comm.datastore.SettingConstants
 import com.a10miaomiao.bilimiao.comm.datastore.SettingPreferences
 import com.a10miaomiao.bilimiao.comm.delegate.helper.StatusBarHelper
@@ -607,7 +610,39 @@ class MainActivity
 
         // 百度移动统计埋点
         BilimiaoStatService.onResume(this)
+
+        checkClipboardBiliLink()
     }
+
+    /**
+     * 剪贴板里的 B 站链接解析。
+     *
+     * 应用回到前台时读一次剪贴板（前台读取剪贴板不需要权限），
+     * 认出 B 站视频/UP 主链接就用底部面板把对应卡片弹出来。
+     * 同一个链接只弹一次，避免来回切换页面时反复弹出。
+     */
+    private fun checkClipboardBiliLink() {
+        try {
+            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                ?: return
+            if (!clipboardManager.hasPrimaryClip()) return
+            val text = clipboardManager.primaryClip
+                ?.getItemAt(0)
+                ?.coerceToText(this)
+                ?.toString()
+                ?.trim()
+                .orEmpty()
+            if (text.isEmpty() || text == lastClipboardBiliLink) return
+            val link = BiliLinkParser.parse(text) ?: return
+            lastClipboardBiliLink = text
+            openBottomSheet(BiliLinkPage.of(link))
+        } catch (e: Exception) {
+            // 读剪贴板失败不影响正常使用
+            miaoLogger().d("clipboard" to "read fail", "message" to (e.message ?: ""))
+        }
+    }
+
+    private var lastClipboardBiliLink: String? = null
 
     override fun onPause() {
         super.onPause()
