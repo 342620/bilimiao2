@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SingleChoiceSegmentedButtonRowScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -154,6 +155,9 @@ private fun ThemeSettingPageContent(
                 )
                 SingleChoiceSegmentedButtonRow {
                     viewModel.darkModeList.forEachIndexed { index, mode ->
+                        // SegmentedButton 是 SingleChoiceSegmentedButtonRowScope 的扩展，
+                        // 套进 Box 之后隐式接收者不可用，这里取出行作用域显式调用
+                        val rowScope: SingleChoiceSegmentedButtonRowScope = this
                         // 无障碍：M3 的 SegmentedButton 会把 selected 放在自己的节点上，
                         // 读屏会按控件状态再念一次选中态，外面叠语义覆盖不掉它，
                         // 所以每个按钮外面套一层，用 clearAndSetSemantics 覆盖整棵子树，
@@ -170,7 +174,7 @@ private fun ThemeSettingPageContent(
                                     }
                                 },
                         ) {
-                            SegmentedButton(
+                            rowScope.SegmentedButton(
                                 shape = SegmentedButtonDefaults.itemShape(
                                     index = index,
                                     count = viewModel.darkModeListSize,
@@ -208,7 +212,8 @@ private fun ThemeSettingPageContent(
                 )
                 SingleChoiceSegmentedButtonRow {
                     viewModel.appBarTypeList.forEachIndexed { index, type ->
-                        // 同上：外面套一层覆盖整棵子树的语义，避免选中态读两遍
+                        // 同上：取出作用域显式调用，并在外层覆盖整棵子树的语义
+                        val rowScope: SingleChoiceSegmentedButtonRowScope = this
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -221,7 +226,7 @@ private fun ThemeSettingPageContent(
                                     }
                                 },
                         ) {
-                            SegmentedButton(
+                            rowScope.SegmentedButton(
                                 shape = SegmentedButtonDefaults.itemShape(
                                     index = index,
                                     count = viewModel.appBarTypeListSize,
