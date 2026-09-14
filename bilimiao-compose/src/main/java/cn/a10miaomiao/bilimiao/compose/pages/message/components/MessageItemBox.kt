@@ -45,6 +45,8 @@ internal fun MessageItemBox(
     detailActionLabel: String = "查看详情",
     /** 评论内容对应的操作名称，不需要时传 null */
     messageActionLabel: String? = null,
+    /** 播报时用的动作词，不传就用界面上显示的那句（比如“回复了我的评论”） */
+    spokenActionText: String? = null,
 ) {
     Row(
         modifier = Modifier
@@ -55,7 +57,7 @@ internal fun MessageItemBox(
             .clearAndSetSemantics {
                 contentDescription = buildMessageDescription(
                     nickname = nickname,
-                    actionText = actionText,
+                    actionText = spokenActionText ?: actionText,
                     sourceContent = sourceContent,
                     title = title,
                     time = time,
@@ -142,7 +144,8 @@ internal fun MessageItemBox(
 }
 
 /**
- * 消息条目的无障碍文案，顺序：昵称加动作、评论内容、右侧被评论的内容、时间。
+ * 消息条目的无障碍文案，顺序：昵称、对方的内容、动作（回复了我的评论 / 在视频中@了我 / 赞了我的评论）、
+ * 被回复或被赞的内容、时间。动作放在两段内容中间，用来区分哪段是对方说的、哪段是自己被回复的。
  */
 private fun buildMessageDescription(
     nickname: String,
@@ -152,8 +155,9 @@ private fun buildMessageDescription(
     time: Long,
 ): String {
     val parts = mutableListOf<String>()
-    (nickname + actionText).trim().takeIf { it.isNotEmpty() }?.let { parts.add(it) }
+    nickname.trim().takeIf { it.isNotEmpty() }?.let { parts.add(it) }
     sourceContent?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
+    actionText.trim().takeIf { it.isNotEmpty() }?.let { parts.add(it) }
     title?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
     NumberUtil.converCTime(time).takeIf { it.isNotBlank() }?.let { parts.add(it) }
     return parts.joinToString(", ")
