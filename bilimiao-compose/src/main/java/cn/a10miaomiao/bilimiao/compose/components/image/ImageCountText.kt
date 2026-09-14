@@ -18,13 +18,3 @@ fun imageCountText(count: Int): String = when {
  */
 fun imagePositionText(index: Int, count: Int): String =
     "图片第${index + 1}张，共${count}张"
-
-/**
- * 动态卡片（整张卡合并成一个焦点）里的图片数量文案。
- * 和详情页逐张图片的说法不一样：这里读"含一张图片 / 含 N 张图片"。
- */
-fun dynamicImageCountText(count: Int): String = when {
-    count == 1 -> "含一张图片"
-    count > 1 -> "含${count}张图片"
-    else -> ""
-}
