@@ -87,7 +87,7 @@ import kotlinx.serialization.serializer
 import kotlin.reflect.KType
 
 /** 页面没有设置标题时，读屏播报的兜底窗口标题 */
-private const val DEFAULT_PAGE_PANE_TITLE = "bilimiao"
+const val DEFAULT_PAGE_PANE_TITLE = "bilimiao"
 
 class BilimiaoPageRoute (
     val builder: NavGraphBuilder

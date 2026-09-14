@@ -88,7 +88,7 @@ internal val LocalPageConfigState: ProvidableCompositionLocal<PageConfigState?> 
  * 每个导航目的地各持一份，由页面里的 PageConfig(title = ...) 写入，
  * 目的地容器再把它设成 paneTitle，这样进入新页面时读屏能播报本页标题。
  */
-internal val LocalPagePaneTitle: ProvidableCompositionLocal<MutableState<String>?> =
+val LocalPagePaneTitle: ProvidableCompositionLocal<MutableState<String>?> =
     compositionLocalOf { null }
 
 @Composable
