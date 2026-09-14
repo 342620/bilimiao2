@@ -7,7 +7,7 @@ import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.comm.delegate.player.entity.PlayerSourceInfo
-import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
+import com.a10miaomiao.bilimiao.comm.mypage.announcePopupMenuTitle
 import com.a10miaomiao.bilimiao.comm.store.UserStore
 
 class QualityPopupMenu(
@@ -24,7 +24,6 @@ init {
         popupMenu.menu.apply {
             initMenu()
         }
-        popupMenu.setA11yTitle("清晰度")
 
         //使用反射，强制显示菜单图标
         try {
@@ -64,5 +63,7 @@ init {
 
     fun show() {
         popupMenu.show()
+        // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+        anchor.announcePopupMenuTitle("清晰度")
     }
 }

@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.Menu
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
-import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
+import com.a10miaomiao.bilimiao.comm.mypage.announcePopupMenuTitle
 
 class SpeedPopupMenu(
     private val activity: Activity,
@@ -18,7 +18,6 @@ class SpeedPopupMenu(
         popupMenu.menu.apply {
             initMenu()
         }
-        popupMenu.setA11yTitle("播放速度")
     }
 
     private fun Menu.initMenu() {
@@ -41,5 +40,7 @@ class SpeedPopupMenu(
 
     fun show() {
         popupMenu.show()
+        // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+        anchor.announcePopupMenuTitle("播放速度")
     }
 }

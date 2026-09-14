@@ -282,7 +282,7 @@ class MainActivity
                             myPage = fragment,
                             myPageMenu = childMenu,
                             anchorView = it,
-                            title = it.prop.title,
+                            title = it.prop.title.orEmpty(),
                         )
                         myPopupMenu.show()
                     } else {

@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
-import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
+import com.a10miaomiao.bilimiao.comm.mypage.announcePopupMenuTitle
 
 class CheckPopupMenu<T>(
     private val context: Context,
@@ -21,8 +21,6 @@ class CheckPopupMenu<T>(
             initMenu()
         }
         popupMenu.setOnMenuItemClickListener(this)
-        // 无障碍：给原生菜单加标题，读屏弹出时才知道这是什么菜单
-        title?.let { popupMenu.setA11yTitle(it) }
     }
 
     private fun Menu.initMenu() {
@@ -40,6 +38,8 @@ class CheckPopupMenu<T>(
 
     fun show() {
         popupMenu.show()
+        // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+        anchor.announcePopupMenuTitle(title)
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {

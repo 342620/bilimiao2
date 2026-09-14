@@ -25,7 +25,7 @@ import com.a10miaomiao.bilimiao.comm.datastore.SettingConstants
 import com.a10miaomiao.bilimiao.comm.datastore.SettingPreferences
 import com.a10miaomiao.bilimiao.comm.delegate.helper.StatusBarHelper
 import com.a10miaomiao.bilimiao.comm.dialogx.showTop
-import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
+import com.a10miaomiao.bilimiao.comm.mypage.announcePopupMenuTitle
 import com.a10miaomiao.bilimiao.comm.navigation.openBottomSheet
 import com.a10miaomiao.bilimiao.comm.store.AppStore
 import com.a10miaomiao.bilimiao.comm.store.PlayListStore
@@ -459,8 +459,9 @@ class PlayerController(
             popupMenu.inflate(R.menu.player_full_mode)
             popupMenu.menu.findItem(checkMenuId).isChecked = true
             popupMenu.setOnMenuItemClickListener(fullModeMenuItemClick)
-            popupMenu.setA11yTitle("全屏模式")
             popupMenu.show()
+            // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+            view.announcePopupMenuTitle("全屏模式")
         }
     }
 
@@ -498,8 +499,9 @@ class PlayerController(
         }
         popupMenu.menu.findItem(checkMenuId).isChecked = true
         popupMenu.setOnMenuItemClickListener(this::moreMenuItemClick)
-        popupMenu.setA11yTitle("播放器菜单")
         popupMenu.show()
+        // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+        view.announcePopupMenuTitle("播放器菜单")
     }
 
     fun showPagesOrEpisodes(view: View) {

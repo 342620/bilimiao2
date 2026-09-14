@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.a10miaomiao.bilimiao.MainActivity
 import com.a10miaomiao.bilimiao.comm.delegate.player.BasePlayerDelegate
-import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
+import com.a10miaomiao.bilimiao.comm.mypage.announcePopupMenuTitle
 
 class MainBackPopupMenu(
     private val activity: Activity,
@@ -22,7 +22,6 @@ class MainBackPopupMenu(
             initMenu()
         }
         popupMenu.setOnMenuItemClickListener(this)
-        popupMenu.setA11yTitle("返回菜单")
     }
     private fun Menu.initMenu() {
         add(Menu.FIRST, 0, 0, "返回首页")
@@ -45,6 +44,8 @@ class MainBackPopupMenu(
 
     fun show() {
         popupMenu.show()
+        // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+        anchor.announcePopupMenuTitle("返回菜单")
     }
 
 

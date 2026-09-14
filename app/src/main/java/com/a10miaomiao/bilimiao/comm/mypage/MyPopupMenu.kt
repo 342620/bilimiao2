@@ -66,9 +66,9 @@ class MyPopupMenu(
         val popupMenu = PopupMenu(activity, anchorView)
         popupMenu.menu.initMenu()
         popupMenu.setOnMenuItemClickListener(this)
-        // 无障碍：给原生菜单加标题，读屏弹出时才知道这是什么菜单
-        popupMenu.setA11yTitle(title)
         popupMenu.show()
+        // 无障碍：原生菜单没有标题，弹出后播报一次这是什么菜单
+        anchorView.announcePopupMenuTitle(title)
     }
 
 
