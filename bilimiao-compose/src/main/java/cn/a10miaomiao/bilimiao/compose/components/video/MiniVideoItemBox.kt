@@ -29,8 +29,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -62,7 +63,22 @@ fun MiniVideoItemBox(
     onClick: () -> Unit,
 ) {
     MiaoCard(
-        modifier = modifier,
+        modifier = modifier
+            // 和列表卡片（VideoItemBox）用同一份拼装逻辑，
+            // 读成“标题,播放X,弹幕Y,时长Z,UP主W”，避免靠合并子节点自动拼出没有逗号的乱序文案
+            .clearAndSetSemantics {
+                contentDescription = videoItemContentDescription(
+                    title = title,
+                    upperName = upperName,
+                    playNum = playNum,
+                    damukuNum = damukuNum,
+                    duration = duration,
+                )
+                onClick(label = null) {
+                    onClick.invoke()
+                    true
+                }
+            },
         onClick = onClick,
     ) {
         Box(
@@ -96,7 +112,7 @@ fun MiniVideoItemBox(
                         modifier = Modifier.size(16.dp),
                         tint = Color.White,
                         imageVector = BilimiaoIcons.Common.Playnum,
-                        contentDescription = "播放"
+                        contentDescription = null,
                     )
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
@@ -109,7 +125,7 @@ fun MiniVideoItemBox(
                         modifier = Modifier.size(16.dp),
                         tint = Color.White,
                         imageVector = BilimiaoIcons.Common.Danmukunum,
-                        contentDescription = "弹幕"
+                        contentDescription = null,
                     )
                     Text(
                         modifier = Modifier.padding(start = 2.dp),
@@ -121,10 +137,7 @@ fun MiniVideoItemBox(
                 Spacer(modifier = Modifier.weight(1f))
                 if (duration != null) {
                     Text(
-                        modifier = Modifier.padding(start = 2.dp)
-                            .semantics {
-                                contentDescription = "视频时长：$duration"
-                            },
+                        modifier = Modifier.padding(start = 2.dp),
                         text = duration,
                         color = Color.White,
                         style = MaterialTheme.typography.bodySmall,
@@ -159,7 +172,7 @@ fun MiniVideoItemBox(
                     modifier = Modifier.size(16.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     imageVector = BilimiaoIcons.Common.Upper,
-                    contentDescription = "UP主",
+                    contentDescription = null,
                 )
                 Text(
                     modifier = Modifier.padding(start = 2.dp),

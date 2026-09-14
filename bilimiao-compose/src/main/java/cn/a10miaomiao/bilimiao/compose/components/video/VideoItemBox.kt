@@ -238,7 +238,7 @@ fun VideoItemBox(
  * 卡片无障碍播报文案，固定顺序：标题、播放、弹幕、时长、UP主。
  * UP主放在最后，避免 TalkBack 先把 UP主念出来。
  */
-private fun videoItemContentDescription(
+internal fun videoItemContentDescription(
     title: String?,
     upperName: String?,
     playNum: String?,
