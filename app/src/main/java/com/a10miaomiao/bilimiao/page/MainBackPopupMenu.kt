@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import com.a10miaomiao.bilimiao.MainActivity
 import com.a10miaomiao.bilimiao.comm.delegate.player.BasePlayerDelegate
+import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
 
 class MainBackPopupMenu(
     private val activity: Activity,
@@ -21,8 +22,8 @@ class MainBackPopupMenu(
             initMenu()
         }
         popupMenu.setOnMenuItemClickListener(this)
+        popupMenu.setA11yTitle("返回菜单")
     }
-
     private fun Menu.initMenu() {
         add(Menu.FIRST, 0, 0, "返回首页")
         add(Menu.FIRST, 1, 0, "退出播放")

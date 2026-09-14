@@ -1,4 +1,5 @@
 package cn.a10miaomiao.bilimiao.compose.pages.mine.content
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 
 import androidx.compose.foundation.background
@@ -16,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -234,14 +234,12 @@ fun TypeBangumiContent(
             )
         ) {
             items(viewModel.statusList, { it.first }) {
-                FilterChip(
+                A11yFilterChip(
+                    text = it.second,
                     selected = it.first == currentStatus,
                     onClick = {
                         viewModel.updateStatus(it.first)
                     },
-                    label = {
-                        Text(text = it.second)
-                    }
                 )
             }
         }

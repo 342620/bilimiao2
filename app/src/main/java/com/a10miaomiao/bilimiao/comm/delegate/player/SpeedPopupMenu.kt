@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.Menu
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
 
 class SpeedPopupMenu(
     private val activity: Activity,
@@ -17,6 +18,7 @@ class SpeedPopupMenu(
         popupMenu.menu.apply {
             initMenu()
         }
+        popupMenu.setA11yTitle("播放速度")
     }
 
     private fun Menu.initMenu() {

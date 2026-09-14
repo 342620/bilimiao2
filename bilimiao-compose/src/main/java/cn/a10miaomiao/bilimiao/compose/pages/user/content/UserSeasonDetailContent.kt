@@ -1,4 +1,5 @@
 package cn.a10miaomiao.bilimiao.compose.pages.user.content
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 
 import android.net.Uri
@@ -23,7 +24,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -422,14 +422,12 @@ internal fun UserSeasonDetailContent(
                 horizontalArrangement = Arrangement.spacedBy(5.dp),
             ) {
                 items(sections, { it.id }) {
-                    FilterChip(
+                    A11yFilterChip(
+                        text = it.title,
                         selected = curSection?.id == it.id,
                         onClick = {
                             viewModel.setCurrentSection(it)
                         },
-                        label = {
-                            Text(text = it.title)
-                        }
                     )
                 }
             }

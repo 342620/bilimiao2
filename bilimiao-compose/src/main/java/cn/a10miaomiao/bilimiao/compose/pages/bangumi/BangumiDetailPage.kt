@@ -1,4 +1,5 @@
 package cn.a10miaomiao.bilimiao.compose.pages.bangumi
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 
 import android.content.ClipData
@@ -656,14 +657,12 @@ private fun BangumiDetailPageContent(
                                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                                     ) {
                                         items(seasons, { it.season_id }) {
-                                            FilterChip(
+                                            A11yFilterChip(
+                                                text = it.season_title,
                                                 selected = it.season_id == seasonId.value,
                                                 onClick = {
                                                     seasonId.value = it.season_id
                                                 },
-                                                label = {
-                                                    Text(text = it.season_title)
-                                                }
                                             )
                                         }
                                     }
@@ -686,16 +685,12 @@ private fun BangumiDetailPageContent(
                             horizontalArrangement = Arrangement.spacedBy(5.dp)
                         ) {
                             items(sectionList, { it.id }) {
-                                FilterChip(
+                                A11yFilterChip(
+                                    text = it.title,
                                     selected = it.id == sectionId,
                                     onClick = {
                                         viewModel.changeSection(it)
                                     },
-                                    label = {
-                                        Text(
-                                            text = it.title
-                                        )
-                                    }
                                 )
                             }
                         }

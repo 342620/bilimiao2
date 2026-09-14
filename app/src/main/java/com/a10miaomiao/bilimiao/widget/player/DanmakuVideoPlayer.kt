@@ -319,6 +319,7 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
                 anchor = it,
                 menus = menus,
                 value = currentSubtitleSource,
+                title = "选择字幕",
             )
             pm.onMenuItemClick = {
                 currentSubtitleSource = it.value

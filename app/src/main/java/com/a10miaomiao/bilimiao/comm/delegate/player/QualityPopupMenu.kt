@@ -7,6 +7,7 @@ import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.appcompat.widget.PopupMenu
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.comm.delegate.player.entity.PlayerSourceInfo
+import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
 import com.a10miaomiao.bilimiao.comm.store.UserStore
 
 class QualityPopupMenu(
@@ -19,11 +20,11 @@ class QualityPopupMenu(
     private val popupMenu = PopupMenu(activity, anchor)
     val MAX_QUALITY_NOT_LOGIN = 48 // 48[480P 清晰]
     val MAX_QUALITY_NOT_VIP = 80 // 80[1080P 高清]
-
-    init {
+init {
         popupMenu.menu.apply {
             initMenu()
         }
+        popupMenu.setA11yTitle("清晰度")
 
         //使用反射，强制显示菜单图标
         try {

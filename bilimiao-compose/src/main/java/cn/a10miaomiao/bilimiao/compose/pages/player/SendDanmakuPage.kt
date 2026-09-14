@@ -1,4 +1,5 @@
 package cn.a10miaomiao.bilimiao.compose.pages.player
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 
 import androidx.compose.animation.AnimatedContentScope
@@ -20,7 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -274,14 +274,12 @@ internal fun SendDanmakuPageContent(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(viewModel.danmakuTypeList) {
-                    FilterChip(
+                    A11yFilterChip(
+                        text = it.label,
                         selected = danmakuType == it.value,
                         onClick = {
                             viewModel.setDanmakuTextTypeValue(it.value)
                         },
-                        label = {
-                            Text(text = it.label)
-                        }
                     )
                 }
             }
@@ -299,14 +297,12 @@ internal fun SendDanmakuPageContent(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(viewModel.danmakuTextSizeList) {
-                    FilterChip(
+                    A11yFilterChip(
+                        text = it.label,
                         selected = danmakuTextSize == it.value,
                         onClick = {
                             viewModel.setDanmakuTextSizeValue(it.value)
                         },
-                        label = {
-                            Text(text = it.label)
-                        }
                     )
                 }
             }
@@ -323,7 +319,8 @@ internal fun SendDanmakuPageContent(
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(viewModel.danmakuColorList) {
-                    FilterChip(
+                    A11yFilterChip(
+                        text = it.label,
                         selected = danmakuColor == it.value,
                         onClick = {
                             viewModel.setDanmakuTextColorValue(it.value)
@@ -333,7 +330,7 @@ internal fun SendDanmakuPageContent(
                                 text = it.label,
                                 modifier = Modifier.background(Color(it.value.toLong() or 0xFF000000))
                             )
-                        }
+                        },
                     )
                 }
             }

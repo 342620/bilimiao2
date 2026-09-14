@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +38,7 @@ import com.a10miaomiao.bilimiao.comm.network.MiaoHttp.Companion.json
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -103,7 +103,8 @@ fun EmojiGridBox(
                 ) {
                     items(packageList.size) {
                         val item = packageList[it]
-                        FilterChip(
+                        A11yFilterChip(
+                            text = item.text,
                             selected = it == pagerState.currentPage,
                             onClick = {
                                 scope.launch {
@@ -117,9 +118,6 @@ fun EmojiGridBox(
                                     contentDescription = null,
                                 )
                             },
-                            label = {
-                                Text(item.text)
-                            }
                         )
                     }
                 }

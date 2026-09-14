@@ -1,4 +1,5 @@
 package cn.a10miaomiao.bilimiao.compose.pages.mine
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 
 import android.view.View
@@ -17,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -470,23 +470,19 @@ private fun WatchLaterPageContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FilterChip(
+            A11yFilterChip(
+                text = "全部",
                 selected = viewModel.listSortField == 1,
                 onClick = {
                     viewModel.setListSortField(1)
                 },
-                label = {
-                    Text("全部")
-                }
             )
-            FilterChip(
+            A11yFilterChip(
+                text = "未看完",
                 selected = viewModel.listSortField == 10,
                 onClick = {
                     viewModel.setListSortField(10)
                 },
-                label = {
-                    Text("未看完")
-                }
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(

@@ -9,7 +9,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.a10miaomiao.bilimiao.comm.store.RegionStore
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import org.kodein.di.instance
 
 data class MoreConditionsInfo(
@@ -172,10 +172,10 @@ internal fun MoreConditionsDialog(
                     ) {
                         state.timeTypeList.forEach { duration ->
                             val selected = timeTypeSelected == duration.first
-                            FilterChip(
-                                selected,
+                            A11yFilterChip(
+                                text = duration.second,
+                                selected = selected,
                                 onClick = { state.run { handleSelectedTimeType(duration.first) } },
-                                label = { Text(duration.second) },
                             )
                         }
                     }
@@ -188,10 +188,10 @@ internal fun MoreConditionsDialog(
                     ) {
                         state.durationList.forEach { duration ->
                             val selected = durationSelectedList.indexOf(duration.first) != -1
-                            FilterChip(
-                                selected,
+                            A11yFilterChip(
+                                text = duration.second,
+                                selected = selected,
                                 onClick = { state.run { handleSelectedDuration(duration.first) } },
-                                label = { Text(duration.second) },
                             )
                         }
                     }
@@ -204,10 +204,10 @@ internal fun MoreConditionsDialog(
                     ) {
                         state.regionList.forEach { region ->
                             val selected = regionSelectedList.indexOf(region.first) != -1
-                            FilterChip(
-                                selected,
+                            A11yFilterChip(
+                                text = region.second,
+                                selected = selected,
                                 onClick = { state.run { handleSelectedRegion(region.first) } },
-                                label = { Text(region.second) },
                             )
                         }
                     }

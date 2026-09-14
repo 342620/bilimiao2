@@ -1,4 +1,5 @@
 package cn.a10miaomiao.bilimiao.compose.pages.dynamic.components
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -221,16 +221,14 @@ private fun DynamicAllAndVideoWrap(
             ) {
                 items(tabs.size, { it }) { index ->
                     val tab = tabs[index]
-                    FilterChip(
+                    A11yFilterChip(
+                        text = tab.second,
                         selected = index == pagerState.currentPage,
                         onClick = {
                             scope.launch {
                                 pagerState.animateScrollToPage(index)
                             }
                         },
-                        label = {
-                            Text(text = tab.second)
-                        }
                     )
                 }
             }

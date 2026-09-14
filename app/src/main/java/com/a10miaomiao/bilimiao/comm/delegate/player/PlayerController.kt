@@ -25,6 +25,7 @@ import com.a10miaomiao.bilimiao.comm.datastore.SettingConstants
 import com.a10miaomiao.bilimiao.comm.datastore.SettingPreferences
 import com.a10miaomiao.bilimiao.comm.delegate.helper.StatusBarHelper
 import com.a10miaomiao.bilimiao.comm.dialogx.showTop
+import com.a10miaomiao.bilimiao.comm.mypage.setA11yTitle
 import com.a10miaomiao.bilimiao.comm.navigation.openBottomSheet
 import com.a10miaomiao.bilimiao.comm.store.AppStore
 import com.a10miaomiao.bilimiao.comm.store.PlayListStore
@@ -458,6 +459,7 @@ class PlayerController(
             popupMenu.inflate(R.menu.player_full_mode)
             popupMenu.menu.findItem(checkMenuId).isChecked = true
             popupMenu.setOnMenuItemClickListener(fullModeMenuItemClick)
+            popupMenu.setA11yTitle("全屏模式")
             popupMenu.show()
         }
     }
@@ -496,6 +498,7 @@ class PlayerController(
         }
         popupMenu.menu.findItem(checkMenuId).isChecked = true
         popupMenu.setOnMenuItemClickListener(this::moreMenuItemClick)
+        popupMenu.setA11yTitle("播放器菜单")
         popupMenu.show()
     }
 

@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cn.a10miaomiao.bilimiao.compose.components.miao.A11yFilterChip
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
 import cn.a10miaomiao.bilimiao.compose.common.diViewModel
 import cn.a10miaomiao.bilimiao.compose.common.flow.stateMap
@@ -412,16 +412,12 @@ private fun BangumiEpisodesPageContent(
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
                         items(sectionList, { it.id }) {
-                            FilterChip(
+                            A11yFilterChip(
+                                text = it.title,
                                 selected = it.id == currentSection.sectionId,
                                 onClick = {
                                     viewModel.changeSection(it)
                                 },
-                                label = {
-                                    Text(
-                                        text = it.title
-                                    )
-                                }
                             )
                         }
                     }
