@@ -28,6 +28,7 @@ import androidx.navigation.NavBackStackEntry
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
 import cn.a10miaomiao.bilimiao.compose.common.diViewModel
 import cn.a10miaomiao.bilimiao.compose.common.localContainerView
+import cn.a10miaomiao.bilimiao.compose.common.mypage.LocalPagePaneTitle
 import cn.a10miaomiao.bilimiao.compose.common.mypage.PageConfig
 import cn.a10miaomiao.bilimiao.compose.common.preference.rememberPreferenceFlow
 import cn.a10miaomiao.bilimiao.compose.components.preference.sliderIntPreference
@@ -53,6 +54,8 @@ class FlagsSettingPage : ComposePage() {
 
     @Composable
     override fun Content() {
+        // 先把窗口标题定下来：页面内容较多时，晚注册会让读屏进入时读不到标题
+        LocalPagePaneTitle.current?.value = "实验性功能"
         val viewModel: FlagsSettingPageViewModel = diViewModel()
         FlagsSettingPageContent(viewModel)
     }

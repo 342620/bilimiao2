@@ -31,6 +31,7 @@ import cn.a10miaomiao.bilimiao.compose.base.ComposePage
 import cn.a10miaomiao.bilimiao.compose.common.defaultNavOptions
 import cn.a10miaomiao.bilimiao.compose.common.diViewModel
 import cn.a10miaomiao.bilimiao.compose.common.localContainerView
+import cn.a10miaomiao.bilimiao.compose.common.mypage.LocalPagePaneTitle
 import cn.a10miaomiao.bilimiao.compose.common.mypage.PageConfig
 import cn.a10miaomiao.bilimiao.compose.common.navigation.PageNavigation
 import cn.a10miaomiao.bilimiao.compose.common.preference.rememberPreferenceFlow
@@ -63,6 +64,8 @@ class SettingPage : ComposePage() {
 
     @Composable
     override fun Content() {
+        // 先把窗口标题定下来：页面内容较多时，晚注册会让读屏进入时读不到标题
+        LocalPagePaneTitle.current?.value = "设置"
         val viewModel: SettingPageViewModel = diViewModel()
         SettingPageContent(viewModel)
     }
