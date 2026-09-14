@@ -200,7 +200,7 @@ private fun EmojiGrid(
                     items(listItems) { item ->
                         Box(
                             modifier = Modifier
-                                .clickable {
+                                .clickable(onClickLabel = "插入表情") {
                                     onInputEmoji(item)
                                 }
                                 .padding(4.dp)
@@ -222,7 +222,7 @@ private fun EmojiGrid(
                         Box(
                             modifier = Modifier
                                 .aspectRatio(1f)
-                                .clickable {
+                                .clickable(onClickLabel = "插入表情") {
                                     onInputEmoji(item)
                                 },
                             contentAlignment = Alignment.Center
@@ -230,7 +230,9 @@ private fun EmojiGrid(
                             GlideImage(
                                 modifier = Modifier.size(48.dp),
                                 model = UrlUtil.autoHttps(item.url),
-                                contentDescription = null,
+                                // 无障碍：表情图自己就带文字说明（item.text，比如 [doge]），
+                                // 直接拿它当标签，读屏聚焦到这个表情时就能读出来
+                                contentDescription = item.text,
                             )
                         }
                     }
