@@ -106,6 +106,24 @@ internal class SendDanmakuViewModel(
         SelectItemInfo("#9B9B9B", 0x9B9B9B),
     )
 
+    /** 弹幕颜色的中文名，只用于读屏播报，界面上仍然显示色值 */
+    internal val danmakuColorNames = mapOf(
+        0xFFFFFF to "白色",
+        0xFE0302 to "红色",
+        0xFF7204 to "橙色",
+        0xFFAA02 to "橙黄色",
+        0xFFD302 to "金黄色",
+        0xFFFF00 to "黄色",
+        0xA0EE00 to "黄绿色",
+        0x00CD00 to "绿色",
+        0x019899 to "青色",
+        0x4266BE to "蓝色",
+        0x89D5FF to "浅蓝色",
+        0xCC0273 to "紫红色",
+        0x222222 to "深灰色",
+        0x9B9B9B to "灰色",
+    )
+
     internal val danmakuTextSizeList = listOf<SelectItemInfo<Float>>(
         SelectItemInfo("默认", 25f),
         SelectItemInfo("较小", 18f),
@@ -320,7 +338,8 @@ internal fun SendDanmakuPageContent(
             ) {
                 items(viewModel.danmakuColorList) {
                     A11yFilterChip(
-                        text = it.label,
+                        // 播报用颜色名，界面上仍显示色值
+                        text = viewModel.danmakuColorNames[it.value] ?: it.label,
                         selected = danmakuColor == it.value,
                         onClick = {
                             viewModel.setDanmakuTextColorValue(it.value)
