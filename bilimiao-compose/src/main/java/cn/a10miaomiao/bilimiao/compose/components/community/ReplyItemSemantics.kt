@@ -9,7 +9,7 @@ import cn.a10miaomiao.bilimiao.compose.components.image.imageCountText
 
 /**
  * 评论项无障碍合并语义的纯函数
- * 拼接规则：昵称, 评论内容, 图片, 点赞/已点赞, X条回复, 时间发布于IP
+ * 拼接规则：昵称（视频作者加“UP主”前缀）, 评论内容, 图片, 点赞/已点赞, X条回复, 时间发布于IP
  * 间隔：英文逗号加空格
  */
 object ReplyItemSemantics {
@@ -26,9 +26,16 @@ object ReplyItemSemantics {
         replyCount: Long,
         time: String,
         location: String,
+        isUpper: Boolean = false,
+        cardLabels: List<String> = emptyList(),
     ): String {
         val parts = mutableListOf<String>()
-        parts.add(uname)
+        // 置顶这类接口给的卡片标放在最前面；UP主已经由 isUpper 表达，这里跳过避免重复
+        cardLabels.filter { it.isNotBlank() && it != "UP主" }
+            .takeIf { it.isNotEmpty() }
+            ?.let { parts.add(it.joinToString("、")) }
+        // 视频作者在自己视频下评论时，昵称后面视觉上有个“UP主”徽标，播报同样带上
+        parts.add(if (isUpper) "UP主$uname" else uname)
         if (content.isNotBlank()) {
             parts.add(content)
         }
@@ -56,9 +63,19 @@ object ReplyItemSemantics {
         replyCount: Long,
         time: String,
         location: String,
+        isUpper: Boolean = false,
+        cardLabels: List<String> = emptyList(),
     ): AnnotatedString {
         return buildAnnotatedString {
-            append(uname)
+            // 置顶这类接口给的卡片标放在最前面；UP主已经由 isUpper 表达，这里跳过避免重复
+            cardLabels.filter { it.isNotBlank() && it != "UP主" }
+                .takeIf { it.isNotEmpty() }
+                ?.let {
+                    append(it.joinToString("、"))
+                    append(", ")
+                }
+            // 视频作者在自己视频下评论时，昵称后面视觉上有个“UP主”徽标，播报同样带上
+            append(if (isUpper) "UP主$uname" else uname)
             // 评论内容（保留链接）
             if (!contentNodes.isNullOrEmpty()) {
                 append(", ")

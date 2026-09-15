@@ -291,6 +291,8 @@ fun ReplyItemBox(
                     replyCount = count,
                     time = time,
                     location = location,
+                    isUpper = isUpper,
+                    cardLabels = cardLabels,
                 )
                 customActions = buildList {
                     add(CustomAccessibilityAction("查看用户主页") { onAvatarClick(); true })
