@@ -235,7 +235,8 @@ fun VideoItemBox(
 
 
 /**
- * 卡片无障碍播报文案，固定顺序：标题、播放、弹幕、时长、UP主。
+ * 卡片无障碍播报文案，固定顺序：标题、观看数、弹幕数、时长、UP主。
+ * 观看数和弹幕数数值在前、标签在后（如“1.4万观看”“111弹幕”），时长和UP主保持标签在前；
  * UP主放在最后，避免 TalkBack 先把 UP主念出来。
  */
 internal fun videoItemContentDescription(
@@ -247,8 +248,8 @@ internal fun videoItemContentDescription(
 ): String {
     val parts = mutableListOf<String>()
     title?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
-    playNum?.takeIf { it.isNotBlank() }?.let { parts.add("播放${NumberUtil.converString(it)}") }
-    damukuNum?.takeIf { it.isNotBlank() }?.let { parts.add("弹幕${NumberUtil.converString(it)}") }
+    playNum?.takeIf { it.isNotBlank() }?.let { parts.add("${NumberUtil.converString(it)}观看") }
+    damukuNum?.takeIf { it.isNotBlank() }?.let { parts.add("${NumberUtil.converString(it)}弹幕") }
     duration?.takeIf { it.isNotBlank() }?.let { parts.add("时长$it") }
     upperName?.takeIf { it.isNotBlank() }?.let { parts.add("UP主$it") }
     return parts.joinToString(", ")
