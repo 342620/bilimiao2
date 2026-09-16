@@ -34,10 +34,13 @@ object ReplyItemSemantics {
         cardLabels.filter { it.isNotBlank() && it != "UP主" }
             .takeIf { it.isNotEmpty() }
             ?.let { parts.add(it.joinToString("、")) }
-        // 视频作者在自己视频下评论时，昵称后面视觉上有个“UP主”徽标，播报同样带上
-        parts.add(if (isUpper) "UP主$uname" else uname)
+        // 视频作者在自己视频下评论时，昵称带“UP主”前缀；昵称与内容之间用“说:”引出
+        val namePart = if (isUpper) "UP主$uname" else uname
         if (content.isNotBlank()) {
-            parts.add(content)
+            // 名字和内容作为同一段，避免中间再插逗号
+            parts.add("$namePart说: $content")
+        } else {
+            parts.add(namePart)
         }
         val imageText = imageCountText(pictureCount)
         if (imageText.isNotEmpty()) {
@@ -74,11 +77,11 @@ object ReplyItemSemantics {
                     append(it.joinToString("、"))
                     append(", ")
                 }
-            // 视频作者在自己视频下评论时，昵称后面视觉上有个“UP主”徽标，播报同样带上
+            // 视频作者在自己视频下评论时，昵称带“UP主”前缀；昵称与内容之间用“说:”引出
             append(if (isUpper) "UP主$uname" else uname)
             // 评论内容（保留链接）
             if (!contentNodes.isNullOrEmpty()) {
-                append(", ")
+                append("说: ")
                 contentNodes.forEach { node ->
                     when (node) {
                         is AnnotatedTextNode.Text -> append(node.text)
