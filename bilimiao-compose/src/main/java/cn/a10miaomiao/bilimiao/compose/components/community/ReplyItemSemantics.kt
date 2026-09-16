@@ -38,7 +38,7 @@ object ReplyItemSemantics {
         val namePart = if (isUpper) "UP主$uname" else uname
         if (content.isNotBlank()) {
             // 名字和内容作为同一段，避免中间再插逗号
-            parts.add("$namePart说: $content")
+            parts.add("${namePart}说: $content")
         } else {
             parts.add(namePart)
         }
