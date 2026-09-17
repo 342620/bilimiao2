@@ -28,6 +28,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.R
 import cn.a10miaomiao.bilimiao.compose.components.miao.MiaoCard
@@ -221,13 +224,17 @@ private fun StartUserMessageBox(
 ) {
     val messageStore by rememberInstance<MessageStore>()
     val messageState by messageStore.stateFlow.collectAsState()
+    val totalCount = messageState.totalCount()
+    val msgContentDescription = if (totalCount > 0) "消息，${totalCount}条未读" else "消息"
     Box(
-        modifier = modifier,
+        modifier = modifier
+            .semantics(mergeDescendants = true) {
+                contentDescription = msgContentDescription
+            },
     ) {
-        val totalCount = messageState.totalCount()
         Image(
             painter = painterResource(id = R.drawable.ic_message),
-            contentDescription = "消息",
+            contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
                 .padding(end = 8.dp)
@@ -239,6 +246,7 @@ private fun StartUserMessageBox(
             Badge(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
+                    .clearAndSetSemantics {},
             ) {
                 Text(
                     text = if (totalCount > 99) {
