@@ -30,7 +30,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.R
 import cn.a10miaomiao.bilimiao.compose.components.miao.MiaoCard
@@ -228,7 +227,8 @@ private fun StartUserMessageBox(
     val msgContentDescription = if (totalCount > 0) "消息，${totalCount}条未读" else "消息"
     Box(
         modifier = modifier
-            .semantics(mergeDescendants = true) {
+            .clickable(onClick = onClick)
+            .clearAndSetSemantics {
                 contentDescription = msgContentDescription
             },
     ) {
@@ -238,15 +238,11 @@ private fun StartUserMessageBox(
             modifier = Modifier
                 .size(40.dp)
                 .padding(end = 8.dp)
-                .clickable(
-                    onClick = onClick,
-                )
         )
         if (totalCount > 0) {
             Badge(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .clearAndSetSemantics {},
+                    .align(Alignment.TopEnd),
             ) {
                 Text(
                     text = if (totalCount > 99) {
