@@ -46,7 +46,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.comm.delegate.helper.StatusBarHelper
 import com.a10miaomiao.bilimiao.comm.utils.miaoLogger
-import com.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
+import cn.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 import com.a10miaomiao.bilimiao.config.config
 import com.a10miaomiao.bilimiao.widget.menu.CheckPopupMenu
 import com.shuyu.gsyvideoplayer.utils.CommonUtil
