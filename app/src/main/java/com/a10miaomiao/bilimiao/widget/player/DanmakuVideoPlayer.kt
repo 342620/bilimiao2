@@ -40,9 +40,13 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.a10miaomiao.bilimiao.R
 import com.a10miaomiao.bilimiao.comm.delegate.helper.StatusBarHelper
 import com.a10miaomiao.bilimiao.comm.utils.miaoLogger
+import com.a10miaomiao.bilimiao.compose.common.foundation.A11yPopTip
 import com.a10miaomiao.bilimiao.config.config
 import com.a10miaomiao.bilimiao.widget.menu.CheckPopupMenu
 import com.shuyu.gsyvideoplayer.utils.CommonUtil
@@ -57,6 +61,7 @@ import master.flame.danmaku.danmaku.parser.BaseDanmakuParser
 import master.flame.danmaku.ui.widget.DanmakuView
 import splitties.dimensions.dip
 import splitties.views.backgroundColor
+import kotlin.math.abs
 import kotlin.math.min
 
 
@@ -341,13 +346,109 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
                 .setUsage(AudioAttributes.USAGE_MEDIA)
                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                 .build()
+            // 不声明 setWillPauseWhenDucked(true)：那是"被闪避时我自己暂停"的口径，
+            // 声明后系统会把读屏朗读这类可闪避请求升级成短暂丢失焦点，闪避永远不生效。
+            // 保持默认（接受被压低音量）后，系统会把本应用的音量压低，朗读结束后自动恢复；
+            // 其它应用真正抢焦点仍走 LOSS/LOSS_TRANSIENT，照旧暂停，与"占用音频焦点"开关语义无关。
             mFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                .setWillPauseWhenDucked(true)
                 .setAcceptsDelayedFocusGain(true)
                 .setOnAudioFocusChangeListener(onAudioFocusChangeListener, mAudioFocusHandler)
                 .setAudioAttributes(attribute)
                 .build()
         }
+        installProgressBarA11y()
+    }
+
+    // ---- 进度条无障碍：读屏可用上下滑调整进度 ----
+
+    /** 读屏调整步长（毫秒）。与手指拖动的灵敏度无关，避免上下滑一次跳太多。 */
+    private val a11ySeekStepMs = 10_000L
+
+    /**
+     * 给进度条补上可调节语义。
+     *
+     * GSY 的进度条只在手指松开（onStopTrackingTouch）时才提交 seek，读屏的上下滑走的是
+     * 无障碍滚动动作，只会触发 onProgressChanged、不会触发那条链路，所以这里自己算目标位置
+     * 并直接 seekTo，再播报结果；同时把范围信息交给无障碍服务，让进度条被识别为可调节。
+     */
+    private fun installProgressBarA11y() {
+        ViewCompat.setAccessibilityDelegate(mProgressBar, object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                val total = currentDurationMs()
+                val position = currentPositionMs()
+                info.contentDescription = if (total > 0L) {
+                    "播放进度，已播${CommonUtil.stringForTime(position)}，共${CommonUtil.stringForTime(total)}"
+                } else {
+                    "播放进度"
+                }
+                if (total > 0L) {
+                    info.rangeInfo = AccessibilityNodeInfoCompat.RangeInfoCompat.obtain(
+                        AccessibilityNodeInfoCompat.RangeInfoCompat.RANGE_TYPE_INT,
+                        0f,
+                        total.toFloat(),
+                        position.toFloat(),
+                    )
+                }
+            }
+
+            override fun performAccessibilityAction(host: View, action: Int, args: Bundle?): Boolean {
+                when (action) {
+                    AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD -> return a11ySeekBy(a11ySeekStepMs)
+                    AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD -> return a11ySeekBy(-a11ySeekStepMs)
+                }
+                return super.performAccessibilityAction(host, action, args)
+            }
+
+            /**
+             * 无障碍焦点停在进度条上时保持控件常显：播放器控件几秒后会自动隐藏，
+             * 调整过程中一旦隐藏，焦点会掉、动作也发不出去；失焦后恢复自动隐藏。
+             */
+            override fun sendAccessibilityEvent(host: View, eventType: Int) {
+                super.sendAccessibilityEvent(host, eventType)
+                when (eventType) {
+                    AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED -> a11yFocusChanged(true)
+                    AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED -> a11yFocusChanged(false)
+                }
+            }
+        })
+    }
+
+    private fun currentDurationMs(): Long = try {
+        getDuration().coerceAtLeast(0L)
+    } catch (e: Exception) {
+        0L
+    }
+
+    /** 无障碍焦点变化时控制播放器控件自动隐藏：聚焦期间常显，失焦恢复自动隐藏。 */
+    private fun a11yFocusChanged(focused: Boolean) {
+        if (focused) cancelDismissControlViewTimer() else startDismissControlViewTimer()
+    }
+
+    private fun currentPositionMs(): Long = try {
+        gsyVideoManager.currentPosition.coerceAtLeast(0L)
+    } catch (e: Exception) {
+        0L
+    }
+
+    private fun a11ySeekBy(deltaMs: Long): Boolean {
+        val total = currentDurationMs()
+        if (total <= 0L) return false
+        return a11ySeekTo(currentPositionMs() + deltaMs)
+    }
+
+    private fun a11ySeekTo(targetMs: Long): Boolean {
+        val total = currentDurationMs()
+        if (total <= 0L) return false
+        val from = currentPositionMs()
+        val target = targetMs.coerceIn(0L, total)
+        seekTo(target)
+        // 立即把进度条落到新位置，避免下一次进度刷新前读屏仍读到旧值
+        mProgressBar.progress = (target * mProgressBar.max / total).toInt()
+        val seconds = (abs(target - from) / 1000).toInt()
+        val action = if (target >= from) "快进" else "快退"
+        A11yPopTip.show("$action${seconds}秒，当前${CommonUtil.stringForTime(target)}")
+        return true
     }
 
     private fun updateMode() {
