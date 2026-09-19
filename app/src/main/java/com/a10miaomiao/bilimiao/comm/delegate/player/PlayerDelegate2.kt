@@ -590,6 +590,7 @@ class PlayerDelegate2(
         }
         playerCoroutineScope.onCreate()
         playerSource = source
+        views.videoPlayer.setLiveMode(source.isLive)
         scaffoldApp.showPlayer = true
         setThumbImageView(source.coverUrl)
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

@@ -11,4 +11,6 @@ data class RoomInfo(
     val title: String,
     val user_cover: String,
     val keyframe: String,
+    // 直播状态：0 未开播、1 直播中、2 轮播。缺省给 0，避免旧响应解析失败。
+    val live_status: Int = 0,
 )

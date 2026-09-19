@@ -16,6 +16,10 @@ abstract class BasePlayerSource() {
     abstract fun getSourceIds(): PlayerSourceIds
 
     open suspend fun getSubtitles(): List<SubtitleSourceInfo> = emptyList()
+
+    /** 直播源标记：进度条、时间与拖动快进按直播处理。 */
+    open val isLive: Boolean get() = false
+
     open suspend fun getDanmakuParser(): BaseDanmakuParser? = null
     open suspend fun historyReport(progress: Long) {}
 

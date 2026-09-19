@@ -16,6 +16,9 @@ sealed interface BiliLink {
     /** UP 主主页 */
     data class Space(val mid: String) : BiliLink
 
+    /** 直播间：房间号 */
+    data class Live(val roomId: String) : BiliLink
+
     /** b23.tv 短链：需要先跟随跳转拿到真实地址 */
     data class Short(val url: String) : BiliLink
 }
@@ -37,6 +40,9 @@ object BiliLinkParser {
 
     private val spaceRegex = Regex("""space\.bilibili\.com/(\d+)""", RegexOption.IGNORE_CASE)
 
+    /** 直播间地址：live.bilibili.com/房间号，兼容 live.bilibili.com/live/房间号.html 旧写法 */
+    private val liveRegex = Regex("""live\.bilibili\.com/(?:live/)?(\d+)""", RegexOption.IGNORE_CASE)
+
     /** 从任意文本里找第一个 B 站链接，找不到返回 null */
     fun parse(text: String): BiliLink? {
         if (text.isBlank()) return null
@@ -54,6 +60,9 @@ object BiliLinkParser {
         }
         spaceRegex.find(trimmed)?.let {
             return BiliLink.Space(it.groupValues[1])
+        }
+        liveRegex.find(trimmed)?.let {
+            return BiliLink.Live(it.groupValues[1])
         }
         bvRegex.find(trimmed)?.let {
             return BiliLink.Video(it.value)

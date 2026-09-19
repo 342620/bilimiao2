@@ -286,6 +286,8 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
     var showBottomProgressBarInPipMode = true
     // 占用音频焦点
     var enabledAudioFocus = true
+    // 直播模式：隐藏进度条与时间，并禁掉拖动快进
+    private var isLiveMode = false
 
     constructor(context: Context?, fullFlag: Boolean?) : super(context, fullFlag) {
         initView()
@@ -451,6 +453,20 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
         return true
     }
 
+    /**
+     * 直播模式开关。
+     *
+     * 直播没有可定位的进度，所以把“当前时间 + 进度条 + 总时长”整行一起隐藏（连行一起藏，
+     * 避免只藏控件留下一行空白），底部那条细进度条也一并隐藏，并禁掉画面拖动快进。
+     */
+    fun setLiveMode(live: Boolean) {
+        if (isLiveMode == live) return
+        isLiveMode = live
+        val progressRow = mProgressBar.parent as? View
+        progressRow?.visibility = if (live) View.GONE else View.VISIBLE
+        mBottomProgressBar.visibility = if (live) View.GONE else View.VISIBLE
+    }
+
     private fun updateMode() {
         when (mode) {
             PlayerMode.SMALL_TOP, PlayerMode.SMALL_FLOAT -> {
@@ -596,6 +612,11 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
     }
 
     override fun touchSurfaceMove(deltaX: Float, deltaY: Float, y: Float) {
+        if (isLiveMode) {
+            // 直播没有可定位的进度，拖动不进入快进逻辑
+            mChangePosition = false
+            return
+        }
         if (isSpeedPlaying) {
             mChangePosition=false
             return
@@ -719,6 +740,11 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
 
     override fun hideAllWidget() {
         super.hideAllWidget()
+        if (isLiveMode) {
+            // 直播不显示底部进度条
+            setViewShowState(mBottomProgressBar, INVISIBLE)
+            return
+        }
         if (isPicInPicMode) {
             if (showBottomProgressBarInPipMode) {
                 setViewShowState(mBottomProgressBar, VISIBLE)
@@ -777,6 +803,11 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
     }
 
     override fun setViewShowState(view: View, visibility: Int) {
+        if (isLiveMode && view.id == mBottomProgressBar.id) {
+            // 直播始终隐藏底部进度条
+            view.visibility = INVISIBLE
+            return
+        }
         if (isPicInPicMode) {
             if (view.id == mStartButton.id || view.id == mBottomProgressBar.id) {
                 view.visibility = visibility

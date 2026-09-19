@@ -25,7 +25,11 @@ import cn.a10miaomiao.bilimiao.compose.components.video.VideoItemBox
 import cn.a10miaomiao.bilimiao.compose.pages.search.components.AuthorItemBox
 import cn.a10miaomiao.bilimiao.compose.pages.user.UserSpacePage
 import cn.a10miaomiao.bilimiao.compose.pages.video.VideoDetailPage
+import com.a10miaomiao.bilimiao.comm.apis.LiveApi
+import com.a10miaomiao.bilimiao.comm.delegate.player.BasePlayerDelegate
+import com.a10miaomiao.bilimiao.comm.delegate.player.LivePlayerSource
 import com.a10miaomiao.bilimiao.comm.entity.ResponseData
+import com.a10miaomiao.bilimiao.comm.entity.live.RoomInfo
 import com.a10miaomiao.bilimiao.comm.entity.user.SpaceInfo
 import com.a10miaomiao.bilimiao.comm.link.BiliLink
 import com.a10miaomiao.bilimiao.comm.link.BiliLinkParser
@@ -60,13 +64,15 @@ class BiliLinkPage(
         const val KIND_VIDEO = "video"
         const val KIND_SPACE = "space"
         const val KIND_SHORT = "short"
+        const val KIND_LIVE = "live"
 
-        /** 解析结果转面板参数：视频是 BV 号或 av 数字，UP 主是 mid，短链是原始链接 */
+        /** 解析结果转面板参数：视频是 BV 号或 av 数字，UP 主是 mid，短链是原始链接，直播间是房间号 */
         fun of(link: BiliLink): BiliLinkPage = when (link) {
             is BiliLink.Video -> BiliLinkPage(KIND_VIDEO, link.bvid)
             is BiliLink.VideoAv -> BiliLinkPage(KIND_VIDEO, link.aid.toString())
             is BiliLink.Space -> BiliLinkPage(KIND_SPACE, link.mid)
             is BiliLink.Short -> BiliLinkPage(KIND_SHORT, link.url)
+            is BiliLink.Live -> BiliLinkPage(KIND_LIVE, link.roomId)
         }
     }
 
@@ -86,6 +92,7 @@ private class BiliLinkViewModel(
 ) : ViewModel(), DIAware {
 
     private val pageNavigation by instance<PageNavigation>()
+    private val basePlayerDelegate by instance<BasePlayerDelegate>()
 
     private var kind = kind
     private var id = id
@@ -110,10 +117,19 @@ private class BiliLinkViewModel(
         val level: Int,
     )
 
+    data class LiveCard(
+        val roomId: String,
+        val title: String,
+        val cover: String,
+        val liveStatus: Int,
+        val ownerId: String,
+    )
+
     val loading = MutableStateFlow(true)
     val fail = MutableStateFlow<Any?>(null)
     val videoCard = MutableStateFlow<VideoCard?>(null)
     val authorCard = MutableStateFlow<AuthorCard?>(null)
+    val liveCard = MutableStateFlow<LiveCard?>(null)
 
     init {
         load()
@@ -143,13 +159,19 @@ private class BiliLinkViewModel(
                         id = parsed.mid
                     }
 
-                    else -> throw IllegalStateException("链接里没有找到视频或UP主")
+                    is BiliLink.Live -> {
+                        kind = BiliLinkPage.KIND_LIVE
+                        id = parsed.roomId
+                    }
+
+                    else -> throw IllegalStateException("链接里没有找到视频、UP主或直播间")
                 }
             }
             when (kind) {
                 BiliLinkPage.KIND_VIDEO -> loadVideo(id)
                 BiliLinkPage.KIND_SPACE -> loadAuthor(id)
-                else -> throw IllegalStateException("链接里没有找到视频或UP主")
+                BiliLinkPage.KIND_LIVE -> loadLive(id)
+                else -> throw IllegalStateException("链接里没有找到视频、UP主或直播间")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -198,6 +220,31 @@ private class BiliLinkViewModel(
         )
     }
 
+    private suspend fun loadLive(roomId: String) {
+        val res = LiveApi().info(roomId).awaitCall().json<ResponseData<RoomInfo>>()
+        val room = res.requireData()
+        liveCard.value = LiveCard(
+            roomId = room.room_id.ifBlank { roomId },
+            title = room.title,
+            cover = room.user_cover,
+            liveStatus = room.live_status,
+            ownerId = room.uid,
+        )
+    }
+
+    /** 进直播间：交给应用内同一个播放器播放，沿用原有播放控件与无障碍标签。 */
+    fun openLive() {
+        val card = liveCard.value ?: return
+        basePlayerDelegate.openPlayer(
+            LivePlayerSource(
+                title = card.title,
+                coverUrl = card.cover,
+                id = card.roomId,
+                ownerId = card.ownerId,
+            )
+        )
+    }
+
     fun openVideo() {
         val card = videoCard.value ?: return
         pageNavigation.navigate(VideoDetailPage(id = card.bvid))
@@ -224,6 +271,7 @@ private fun BiliLinkContent(
     val fail by viewModel.fail.collectAsState()
     val videoCard by viewModel.videoCard.collectAsState()
     val authorCard by viewModel.authorCard.collectAsState()
+    val liveCard by viewModel.liveCard.collectAsState()
     // 委派属性不能智能转换，先取出来
     val failMessage = fail
 
@@ -257,6 +305,18 @@ private fun BiliLinkContent(
                     damukuNum = NumberUtil.converString(card.danmakuNum),
                     duration = card.duration,
                     onClick = { viewModel.openVideo() },
+                )
+            }
+
+            liveCard != null -> {
+                val card = liveCard!!
+                // 卡片播报只念标题、观看、弹幕、时长、UP主，remark 不参与播报，
+                // 所以直播状态直接并进标题，保证读屏能听到"直播中/未开播"。
+                VideoItemBox(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    title = "${if (card.liveStatus == 1) "直播中" else "未开播"}，${card.title}",
+                    pic = card.cover,
+                    onClick = { viewModel.openLive() },
                 )
             }
 
