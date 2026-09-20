@@ -110,8 +110,8 @@ fun DynLiveBox(
 ) {
     val pageNavigation = localPageNavigation()
     val liveStateText = when (dynLive.liveState) {
-        bilibili.app.dynamic.v2.LiveState.LIVE -> "直播中"
-        bilibili.app.dynamic.v2.LiveState.ROTATION -> "轮播中"
+        bilibili.app.dynamic.v2.LiveState.LIVE_LIVE -> "直播中"
+        bilibili.app.dynamic.v2.LiveState.LIVE_ROTATION -> "轮播中"
         else -> "未开播"
     }
     VideoItemBox(
