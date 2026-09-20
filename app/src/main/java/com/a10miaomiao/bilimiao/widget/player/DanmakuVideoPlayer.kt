@@ -462,8 +462,12 @@ class DanmakuVideoPlayer : StandardGSYVideoPlayer {
     fun setLiveMode(live: Boolean) {
         if (isLiveMode == live) return
         isLiveMode = live
-        val progressRow = mProgressBar.parent as? View
-        progressRow?.visibility = if (live) View.GONE else View.VISIBLE
+        // 只隐藏时间文本和进度条，不隐藏整行（全屏按钮和发送弹幕按钮在同一行）
+        val currentText = findViewById<View>(R.id.current)
+        val totalText = findViewById<View>(R.id.total)
+        currentText.visibility = if (live) View.GONE else View.VISIBLE
+        totalText.visibility = if (live) View.GONE else View.VISIBLE
+        mProgressBar.visibility = if (live) View.GONE else View.VISIBLE
         mBottomProgressBar.visibility = if (live) View.GONE else View.VISIBLE
     }
 
