@@ -65,6 +65,15 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
                         videoTitle = dynamicItem.value.title
                     }
 
+                    is ModuleDynamic.ModuleItem.DynCommonLive -> {
+                        val liveStateText = when (dynamicItem.value.liveState) {
+                            bilibili.app.dynamic.v2.LiveState.live_live -> "直播中"
+                            bilibili.app.dynamic.v2.LiveState.live_rotation -> "轮播中"
+                            else -> "未开播"
+                        }
+                        videoTitle = "$liveStateText，${dynamicItem.value.title}"
+                    }
+
                     is ModuleDynamic.ModuleItem.DynForward -> {
                         // 转发的内容：取被转发那条的图片 / 视频标题
                         val forwarded = dynamicItem.value.item?.modules ?: emptyList()
@@ -98,6 +107,67 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
                 reply = item.value.reply
                 repost = item.value.repost
                 isLiked = item.value.likeInfo?.isLike == true
+            }
+
+            // 新版文字动态：动态摘要（标题 + 正文）
+            is Module.ModuleItem.ModuleOpusSummary -> {
+                val titleText = item.value.title?.let { extractParagraphText(it) }.orEmpty()
+                val summaryText = item.value.summary?.let { extractParagraphText(it) }.orEmpty()
+                val opusText = listOf(titleText, summaryText)
+                    .filter { it.isNotBlank() }
+                    .joinToString("\n")
+                if (opusText.isNotBlank()) {
+                    content = if (content.isBlank()) opusText else content + "\n" + opusText
+                }
+                // 摘要附带的封面图
+                if (images.isEmpty()) {
+                    val covers = item.value.covers
+                    if (covers.isNotEmpty()) {
+                        images = covers.map {
+                            val w = min(600, it.width)
+                            val h = w * it.width / it.height
+                            val url = UrlUtil.autoHttps(it.src)
+                            PreviewImageModel(
+                                previewUrl = url + "@${w}w_${h}h",
+                                originalUrl = url,
+                                height = it.height.toFloat(),
+                                width = it.width.toFloat(),
+                            )
+                        }
+                    }
+                }
+            }
+
+            // 新版文字动态：段落（正文段落 / 图片段落）
+            is Module.ModuleItem.ModuleParagraph -> {
+                val para = item.value.paragraph
+                if (para != null) {
+                    when (val contentItem = para.content) {
+                        is bilibili.app.dynamic.v2.Paragraph.Content.Text -> {
+                            val text = extractTextFromNodes(contentItem.value.nodes)
+                            if (text.isNotBlank()) {
+                                content = if (content.isBlank()) text else content + "\n" + text
+                            }
+                        }
+                        is bilibili.app.dynamic.v2.Paragraph.Content.Pic -> {
+                            val pics = contentItem.value.pics?.items
+                            if (images.isEmpty() && pics != null && pics.isNotEmpty()) {
+                                images = pics.map {
+                                    val w = min(600, it.width)
+                                    val h = w * it.width / it.height
+                                    val url = UrlUtil.autoHttps(it.src)
+                                    PreviewImageModel(
+                                        previewUrl = url + "@${w}w_${h}h",
+                                        originalUrl = url,
+                                        height = it.height.toFloat(),
+                                        width = it.width.toFloat(),
+                                    )
+                                }
+                            }
+                        }
+                        else -> Unit
+                    }
+                }
             }
 
             else -> Unit
@@ -144,4 +214,39 @@ private fun bilibili.app.dynamic.v2.MdlDynDraw.toImageModels(): List<PreviewImag
             width = it.width.toFloat(),
         )
     }
+}
+
+/** 从 Paragraph 提取纯文本（含表情的替代文字、链接的显示文字） */
+private fun extractParagraphText(paragraph: bilibili.app.dynamic.v2.Paragraph): String {
+    val content = paragraph.content ?: return ""
+    return when (content) {
+        is bilibili.app.dynamic.v2.Paragraph.Content.Text -> {
+            extractTextFromNodes(content.value.nodes)
+        }
+        else -> ""
+    }
+}
+
+/** 从 TextNode 列表提取纯文本：文字取 raw、表情取 rawText、链接取显示文字 */
+private fun extractTextFromNodes(nodes: List<bilibili.app.dynamic.v2.TextNode>): String {
+    return nodes.mapNotNull { node ->
+        when (val text = node.text) {
+            is bilibili.app.dynamic.v2.TextNode.Text.Word -> text.value.words
+            is bilibili.app.dynamic.v2.TextNode.Text.Emote -> text.value.rawText?.words
+            is bilibili.app.dynamic.v2.TextNode.Text.Link -> {
+                // Link 的 showText 带控制字符，提取可见文字部分
+                val showText = text.value.showText
+                if (showText.isNotEmpty()) {
+                    var start = 0
+                    if (showText[0].code == 0x0a || showText[0].code == 0x0c) start = 1
+                    if (start < showText.length && showText.getOrElse(1) { ' ' }.code == 0x0c) start = 2
+                    if (start > 0) {
+                        val end = showText.indexOf(0x11.toChar())
+                        if (end > start) showText.substring(start, end) else showText.substring(start)
+                    } else showText
+                } else ""
+            }
+            null -> null
+        }
+    }.joinToString("")
 }

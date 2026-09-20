@@ -49,6 +49,7 @@ import cn.a10miaomiao.bilimiao.compose.components.list.SwipeToRefresh
 import cn.a10miaomiao.bilimiao.compose.components.video.MiniVideoItemBox
 import cn.a10miaomiao.bilimiao.compose.components.video.VideoItemBox
 import cn.a10miaomiao.bilimiao.compose.pages.bangumi.BangumiDetailPage
+import cn.a10miaomiao.bilimiao.compose.pages.link.BiliLinkPage
 import com.a10miaomiao.bilimiao.comm.datastore.SettingPreferences
 import com.a10miaomiao.bilimiao.comm.entity.ResponseData
 import com.a10miaomiao.bilimiao.comm.entity.ResultInfo
@@ -118,9 +119,14 @@ private class HomeRecommendContentViewModel(
                 val filterList = itemsList.filter {
                     (it.goto?.isNotEmpty() ?: false)
                             && filterStore.filterWord(it.title)
-                            && it.args != null
-                            && it.args!!.up_id != null
-                            && filterStore.filterUpper(it.args!!.up_id!!)
+                            && if (it.goto == "live") {
+                                // 直播卡片不走 up_id 过滤，直接通过
+                                true
+                            } else {
+                                it.args != null
+                                        && it.args!!.up_id != null
+                                        && filterStore.filterUpper(it.args!!.up_id!!)
+                            }
                 }
                 val newList = if (idx == 0L) mutableListOf()
                 else list.data.value.toMutableList()
@@ -173,6 +179,8 @@ private class HomeRecommendContentViewModel(
             pageNavigation.navigate(BangumiDetailPage(
                 epId = item.param
             ))
+        } else if (item.goto == "live") {
+            pageNavigation.navigate(BiliLinkPage(BiliLinkPage.KIND_LIVE, item.param))
         } else if (!BilibiliNavigation.navigationTo(pageNavigation, item.uri)){
             BilibiliNavigation.navigationToWeb(pageNavigation, item.uri)
         }

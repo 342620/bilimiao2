@@ -40,8 +40,8 @@ object BiliLinkParser {
 
     private val spaceRegex = Regex("""space\.bilibili\.com/(\d+)""", RegexOption.IGNORE_CASE)
 
-    /** 直播间地址：live.bilibili.com/房间号，兼容 live.bilibili.com/live/房间号.html 旧写法 */
-    private val liveRegex = Regex("""live\.bilibili\.com/(?:live/)?(\d+)""", RegexOption.IGNORE_CASE)
+    /** 直播间地址：live.bilibili.com/房间号，兼容 h5/ 和 live/ 前缀旧写法 */
+    private val liveRegex = Regex("""live\.bilibili\.com/(?:h5/|live/)?(\d+)""", RegexOption.IGNORE_CASE)
 
     /** 从任意文本里找第一个 B 站链接，找不到返回 null */
     fun parse(text: String): BiliLink? {

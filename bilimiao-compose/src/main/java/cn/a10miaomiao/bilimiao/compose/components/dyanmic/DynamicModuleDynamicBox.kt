@@ -20,7 +20,9 @@ import cn.a10miaomiao.bilimiao.compose.common.localPageNavigation
 import cn.a10miaomiao.bilimiao.compose.components.image.ImagesGrid
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.PreviewImageModel
 import cn.a10miaomiao.bilimiao.compose.components.video.VideoItemBox
+import cn.a10miaomiao.bilimiao.compose.pages.link.BiliLinkPage
 import cn.a10miaomiao.bilimiao.compose.pages.video.VideoDetailPage
+import com.a10miaomiao.bilimiao.comm.link.BiliLink
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
 import kotlin.math.min
 
@@ -103,6 +105,35 @@ fun DynForwardBox(
 }
 
 @Composable
+fun DynLiveBox(
+    dynLive: bilibili.app.dynamic.v2.MdlDynLive
+) {
+    val pageNavigation = localPageNavigation()
+    val liveStateText = when (dynLive.liveState) {
+        bilibili.app.dynamic.v2.LiveState.live_live -> "直播中"
+        bilibili.app.dynamic.v2.LiveState.live_rotation -> "轮播中"
+        else -> "未开播"
+    }
+    VideoItemBox(
+        modifier = Modifier.padding(
+            horizontal = 10.dp,
+            vertical = 5.dp
+        ),
+        title = "$liveStateText，${dynLive.title}",
+        pic = dynLive.cover,
+        remark = listOf(
+            dynLive.coverLabel,
+            dynLive.coverLabel2
+        ).filter { it.isNotEmpty() }.joinToString("  "),
+        onClick = {
+            pageNavigation.navigate(
+                BiliLinkPage(BiliLinkPage.KIND_LIVE, dynLive.id.toString())
+            )
+        }
+    )
+}
+
+@Composable
 fun DynamicModuleDynamicBox(
     dynamic: ModuleDynamic
 ) {
@@ -116,6 +147,9 @@ fun DynamicModuleDynamicBox(
         }
         is ModuleDynamic.ModuleItem.DynForward -> {
             DynForwardBox(moduleItem.value)
+        }
+        is ModuleDynamic.ModuleItem.DynCommonLive -> {
+            DynLiveBox(moduleItem.value)
         }
         else -> {
             Box(
