@@ -66,9 +66,9 @@ fun DynamicItem.toA11yInfo(): DynamicItemA11yInfo {
                     }
 
                     is ModuleDynamic.ModuleItem.DynCommonLive -> {
-                        val liveStateText = when (dynamicItem.value.liveState) {
-                            bilibili.app.dynamic.v2.LiveState.live_live -> "直播中"
-                            bilibili.app.dynamic.v2.LiveState.live_rotation -> "轮播中"
+                        val liveStateText = when (dynamicItem.value.liveState.number) {
+                            1 -> "直播中"
+                            2 -> "轮播中"
                             else -> "未开播"
                         }
                         videoTitle = "$liveStateText，${dynamicItem.value.title}"
