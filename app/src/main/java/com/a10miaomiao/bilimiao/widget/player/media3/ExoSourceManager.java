@@ -27,6 +27,7 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor;
 import androidx.media3.datasource.cache.SimpleCache;
 import androidx.media3.exoplayer.dash.DashMediaSource;
 import androidx.media3.exoplayer.dash.DefaultDashChunkSource;
+import androidx.media3.exoplayer.hls.HlsMediaSource;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.ProgressiveMediaSource;
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
@@ -169,11 +170,11 @@ public class ExoSourceManager{
                         new DefaultDataSource.Factory(mAppContext,
                                 getHttpDataSourceFactory(mAppContext, preview, uerAgent))).createMediaSource(mediaItem);
                 break;
-//            case C.CONTENT_TYPE_HLS:
-//                mediaSource = new HlsMediaSource.Factory(getDataSourceFactoryCache(mAppContext, cacheEnable, preview, cacheDir, uerAgent))
-//                        .setAllowChunklessPreparation(true)
-//                        .createMediaSource(mediaItem);
-//                break;
+            case C.CONTENT_TYPE_HLS:
+                mediaSource = new HlsMediaSource.Factory(getDataSourceFactoryCache(mAppContext, cacheEnable, preview, cacheDir, uerAgent))
+                        .setAllowChunklessPreparation(true)
+                        .createMediaSource(mediaItem);
+                break;
 //            case TYPE_RTMP:
 //                RtmpDataSource.Factory rtmpDataSourceFactory = new RtmpDataSource.Factory();
 //                mediaSource = new ProgressiveMediaSource.Factory(rtmpDataSourceFactory,

@@ -49,6 +49,7 @@ object Libraries {
     const val media3Decoder = "androidx.media3:media3-decoder:${Versions.media3}"
     const val media3ExoPlayer = "androidx.media3:media3-exoplayer:${Versions.media3}"
     const val media3ExoPlayerDash = "androidx.media3:media3-exoplayer-dash:${Versions.media3}"
+    const val media3ExoPlayerHls = "androidx.media3:media3-exoplayer-hls:${Versions.media3}"
     const val media3Session = "androidx.media3:media3-session:${Versions.media3}"
     const val browser = "androidx.browser:browser:1.7.0"
 

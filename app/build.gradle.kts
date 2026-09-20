@@ -142,6 +142,7 @@ dependencies {
     implementation(Libraries.media3Ui)
     implementation(Libraries.media3ExoPlayer)
     implementation(Libraries.media3ExoPlayerDash)
+    implementation(Libraries.media3ExoPlayerHls)
     implementation(Libraries.gsyVideoPlayer)
 
     implementation(Libraries.okhttp3)
