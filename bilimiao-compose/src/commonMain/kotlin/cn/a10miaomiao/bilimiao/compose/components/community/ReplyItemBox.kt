@@ -260,34 +260,28 @@ fun ReplyItemBox(
     onDeleteClick: () -> Unit = {},
     onClick: () -> Unit = {},
 ) {
-    val contentNodes = remember(content) {
-        content?.toAnnotatedTextNode()
-    }
-    val annotatedText = remember(uname, contentNodes, picturesList, like, isLike, count, time, location, isUpper, showDelete) {
-        ReplyItemSemantics.buildAnnotatedText(
-            uname = uname,
-            contentNodes = contentNodes,
-            pictureCount = picturesList.size,
-            like = like,
-            isLike = isLike,
-            replyCount = count,
-            time = time,
-            location = location,
-            isUpper = isUpper,
-            cardLabels = cardLabels,
-        )
-    }
-    val customActions = remember(showDelete) {
-        buildList {
-            add(CustomAccessibilityAction("查看用户主页") { onAvatarClick(); true })
-            add(CustomAccessibilityAction(if (isLike) "取消点赞" else "点赞") { onLikeClick(); true })
-            add(CustomAccessibilityAction(if (count > 0) "查看回复" else "回复评论") { onReplyClick(); true })
-            if (picturesList.isNotEmpty()) {
-                add(CustomAccessibilityAction("查看图片") { /* TODO: 打开图片预览 */ true })
-            }
-            if (showDelete) {
-                add(CustomAccessibilityAction("删除评论") { onDeleteClick(); true })
-            }
+    val contentNodes = content?.toAnnotatedTextNode()
+    val annotatedText = ReplyItemSemantics.buildAnnotatedText(
+        uname = uname,
+        contentNodes = contentNodes,
+        pictureCount = picturesList.size,
+        like = like,
+        isLike = isLike,
+        replyCount = count,
+        time = time,
+        location = location,
+        isUpper = isUpper,
+        cardLabels = cardLabels,
+    )
+    val customActions = buildList {
+        add(CustomAccessibilityAction("查看用户主页") { onAvatarClick(); true })
+        add(CustomAccessibilityAction(if (isLike) "取消点赞" else "点赞") { onLikeClick(); true })
+        add(CustomAccessibilityAction(if (count > 0) "查看回复" else "回复评论") { onReplyClick(); true })
+        if (picturesList.isNotEmpty()) {
+            add(CustomAccessibilityAction("查看图片") { /* TODO: 打开图片预览 */ true })
+        }
+        if (showDelete) {
+            add(CustomAccessibilityAction("删除评论") { onDeleteClick(); true })
         }
     }
     Row(
