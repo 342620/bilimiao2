@@ -97,7 +97,7 @@ fun VideoItemBox(
                             color = Color.White,
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.semantics {
-                                contentDescription = "视频时长：$duration"
+                                contentDescription = ",时长$duration"
                             }
                         )
                     }
@@ -160,7 +160,7 @@ fun VideoItemBox(
                     Text(
                         modifier = Modifier.padding(start = 2.dp)
                             .semantics {
-                                contentDescription = "up主：$upperName"
+                                contentDescription = ",up主$upperName"
                             },
                         text = upperName,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -194,7 +194,7 @@ fun VideoItemBox(
                     Text(
                         modifier = Modifier.padding(start = 2.dp)
                             .semantics {
-                                contentDescription = "播放量：$playNum"
+                                contentDescription = ",${NumberUtil.converString(playNum)}观看"
                             },
                         text = NumberUtil.converString(playNum),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -210,7 +210,7 @@ fun VideoItemBox(
                     Text(
                         modifier = Modifier.padding(start = 2.dp)
                             .semantics {
-                                contentDescription = "弹幕数：$damukuNum"
+                                contentDescription = ",${NumberUtil.converString(damukuNum)}弹幕"
                             },
                         text = NumberUtil.converString(damukuNum),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

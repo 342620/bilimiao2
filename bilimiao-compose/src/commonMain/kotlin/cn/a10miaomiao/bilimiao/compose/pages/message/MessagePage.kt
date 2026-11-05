@@ -28,6 +28,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cn.a10miaomiao.bilimiao.compose.base.ComposePage
@@ -182,6 +185,22 @@ private fun MessagePageContent(
                         scope.launch {
                             pagerState.animateScrollToPage(index)
                         }
+                    },
+                    modifier = Modifier.clearAndSetSemantics {
+                        val unreadCount = messageState.unread?.let {
+                            when (index) {
+                                0 -> it.reply
+                                1 -> it.at
+                                2 -> it.like
+                                else -> 0
+                            }
+                        } ?: 0
+                        contentDescription = if (unreadCount > 0) {
+                            "${tab.name}，$unreadCount 条未读"
+                        } else {
+                            tab.name
+                        }
+                        selected = pagerState.currentPage == index
                     },
                 )
             }

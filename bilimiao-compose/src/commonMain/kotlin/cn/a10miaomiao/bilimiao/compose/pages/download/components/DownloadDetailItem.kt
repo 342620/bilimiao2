@@ -11,6 +11,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
@@ -86,11 +88,11 @@ fun DownloadDetailItem(
                     if (!item.is_completed) {
                         if (item.cid == curDownload?.id && curDownload.status in 100 until  200) {
                             IconButton(onClick = { onPauseClick(curDownload.taskId) }) {
-                                Icon(Icons.Filled.Pause, null)
+                                Icon(Icons.Filled.Pause, "暂停")
                             }
                         } else {
                             IconButton(onClick = onStartClick) {
-                                Icon(Icons.Filled.PlayArrow, null)
+                                Icon(Icons.Filled.PlayArrow, "播放")
                             }
                         }
                     }
@@ -98,11 +100,12 @@ fun DownloadDetailItem(
                         IconButton(
                             onClick = { expandedMoreMenu = true }
                         ) {
-                            Icon(Icons.Filled.MoreVert, null)
+                            Icon(Icons.Filled.MoreVert, "更多")
                         }
                         DropdownMenu(
                             expanded = expandedMoreMenu,
                             onDismissRequest = { expandedMoreMenu = false },
+                            modifier = Modifier.semantics { paneTitle = "更多" },
                         ) {
                             DropdownMenuItem(
                                 onClick = {

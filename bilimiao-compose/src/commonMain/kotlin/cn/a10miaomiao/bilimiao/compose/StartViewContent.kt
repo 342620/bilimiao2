@@ -49,6 +49,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -183,7 +185,8 @@ private fun StartIndexList(
 
     LazyColumn(
         state = listState,
-        modifier = modifier,
+        modifier = modifier
+            .semantics { paneTitle = "菜单" },
         contentPadding = WindowInsets
             .safeDrawing
             .asPaddingValues()
@@ -339,6 +342,7 @@ private fun StartIndexList(
     if (showScannerDownloadDialog) {
         AlertDialog(
             onDismissRequest = { showScannerDownloadDialog = false },
+            modifier = Modifier.semantics { paneTitle = "未安装扫码插件" },
             title = { Text(text = "未安装扫码插件") },
             text = {
                 Text(text = "请前往Github/Gitee下载并安装bilimiao扫码器插件")
@@ -377,6 +381,7 @@ private fun StartIndexList(
     if (showScannerResultTips.isNotEmpty()) {
         AlertDialog(
             onDismissRequest = { showScannerResultTips = "" },
+            modifier = Modifier.semantics { paneTitle = "扫码结果" },
             title = { Text(text = "扫码结果") },
             text = {
                 Text(text = showScannerResultTips)

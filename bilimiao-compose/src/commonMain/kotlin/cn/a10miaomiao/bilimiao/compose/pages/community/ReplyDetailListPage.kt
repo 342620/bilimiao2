@@ -126,6 +126,12 @@ private class ReplyDetailListPageViewModel(
                         like = likeNum,
                     )
                     _detailData.value = newItem
+                    // 成功后给一次反馈，否则读屏在点赞这一瞬间没有任何提示
+                    if (newAction == 1) {
+                        GlobalToaster.show("点赞成功")
+                    } else {
+                        GlobalToaster.show("已取消点赞")
+                    }
                 } else {
                     GlobalToaster.show(res.message)
                 }

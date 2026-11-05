@@ -1,0 +1,307 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :bilimiao-build:checkKotlinGradlePluginConfigurationErrors
+> Task :bilimiao-build:compileKotlin UP-TO-DATE
+> Task :bilimiao-build:compileJava NO-SOURCE
+> Task :bilimiao-build:pluginDescriptors UP-TO-DATE
+> Task :bilimiao-build:processResources UP-TO-DATE
+> Task :bilimiao-build:classes UP-TO-DATE
+> Task :bilimiao-build:jar UP-TO-DATE
+
+> Configure project :app
+WARNING: The option setting 'android.defaults.buildfeatures.buildconfig=true' is deprecated.
+The current default is 'false'.
+It will be removed in version 9.0 of the Android Gradle plugin.
+You can resolve this warning in Android Studio via `Refactor` > `Migrate BuildConfig to Gradle Build Files`
+BilimiaoBuildPlugin
+
+> Configure project :bilimiao-appwidget
+BilimiaoBuildPlugin
+
+> Configure project :bilimiao-comm
+BilimiaoBuildPlugin
+
+> Configure project :bilimiao-compose
+BilimiaoBuildPlugin
+
+> Configure project :bilimiao-cover
+BilimiaoBuildPlugin
+
+> Configure project :bilimiao-download
+BilimiaoBuildPlugin
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.5.1) was tested up to compileSdk = 34.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+For more information refer to the compatibility table:
+https://d.android.com/r/tools/api-level-support
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preFossDebugBuild UP-TO-DATE
+> Task :app:mergeFossDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateFossDebugBuildConfig
+> Task :bilimiao-comm:preBuild UP-TO-DATE
+> Task :bilimiao-comm:preDebugBuild UP-TO-DATE
+> Task :bilimiao-comm:writeDebugAarMetadata
+> Task :bilimiao-compose:preBuild UP-TO-DATE
+> Task :bilimiao-compose:preDebugBuild UP-TO-DATE
+> Task :bilimiao-compose:writeDebugAarMetadata
+> Task :bilimiao-cover:preBuild UP-TO-DATE
+> Task :bilimiao-cover:preDebugBuild UP-TO-DATE
+> Task :bilimiao-cover:writeDebugAarMetadata
+> Task :bilimiao-download:preBuild UP-TO-DATE
+> Task :bilimiao-download:preDebugBuild UP-TO-DATE
+> Task :bilimiao-download:writeDebugAarMetadata
+> Task :DanmakuFlameMaster:preBuild UP-TO-DATE
+> Task :DanmakuFlameMaster:preDebugBuild UP-TO-DATE
+> Task :DanmakuFlameMaster:writeDebugAarMetadata
+> Task :app:checkFossDebugAarMetadata
+> Task :app:generateFossDebugResValues
+> Task :bilimiao-comm:generateDebugResValues
+> Task :bilimiao-comm:generateDebugResources
+> Task :bilimiao-comm:packageDebugResources
+> Task :bilimiao-compose:generateDebugResValues
+> Task :bilimiao-compose:generateDebugResources
+> Task :bilimiao-compose:packageDebugResources
+> Task :bilimiao-cover:generateDebugResValues
+> Task :bilimiao-cover:generateDebugResources
+> Task :bilimiao-cover:packageDebugResources
+> Task :bilimiao-download:generateDebugResValues
+> Task :bilimiao-download:generateDebugResources
+> Task :bilimiao-download:packageDebugResources
+> Task :DanmakuFlameMaster:generateDebugResValues
+> Task :DanmakuFlameMaster:generateDebugResources
+> Task :DanmakuFlameMaster:packageDebugResources
+> Task :app:mapFossDebugSourceSetPaths
+> Task :app:generateFossDebugResources
+> Task :app:mergeFossDebugResources
+> Task :app:createFossDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksFossDebug
+> Task :bilimiao-comm:extractDeepLinksDebug
+> Task :bilimiao-comm:processDebugManifest
+> Task :bilimiao-compose:extractDeepLinksDebug
+> Task :bilimiao-compose:processDebugManifest
+> Task :bilimiao-cover:extractDeepLinksDebug
+> Task :bilimiao-cover:processDebugManifest
+> Task :bilimiao-download:extractDeepLinksDebug
+> Task :bilimiao-download:processDebugManifest
+> Task :DanmakuFlameMaster:extractDeepLinksDebug
+> Task :DanmakuFlameMaster:processDebugManifest
+> Task :app:processFossDebugMainManifest
+> Task :app:processFossDebugManifest
+> Task :app:processFossDebugManifestForPackage
+> Task :bilimiao-comm:compileDebugLibraryResources
+> Task :bilimiao-comm:parseDebugLocalResources
+> Task :DanmakuFlameMaster:parseDebugLocalResources
+> Task :DanmakuFlameMaster:generateDebugRFile
+> Task :bilimiao-comm:generateDebugRFile
+> Task :bilimiao-compose:compileDebugLibraryResources
+> Task :bilimiao-compose:parseDebugLocalResources
+> Task :bilimiao-cover:parseDebugLocalResources
+> Task :bilimiao-cover:generateDebugRFile
+> Task :bilimiao-download:parseDebugLocalResources
+> Task :bilimiao-download:generateDebugRFile
+> Task :bilimiao-compose:generateDebugRFile
+> Task :bilimiao-cover:compileDebugLibraryResources
+> Task :bilimiao-download:compileDebugLibraryResources
+> Task :DanmakuFlameMaster:compileDebugLibraryResources
+> Task :app:processFossDebugResources
+> Task :bilimiao-comm:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :bilimiao-comm:generateDebugBuildConfig
+> Task :bilimiao-comm:extractDebugProto
+> Task :DanmakuFlameMaster:generateDebugBuildConfig
+> Task :DanmakuFlameMaster:javaPreCompileDebug
+
+> Task :DanmakuFlameMaster:compileDebugJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :DanmakuFlameMaster:bundleLibRuntimeToJarDebug
+> Task :DanmakuFlameMaster:processDebugJavaRes NO-SOURCE
+> Task :DanmakuFlameMaster:createFullJarDebug
+> Task :bilimiao-comm:extractIncludeDebugProto
+> Task :bilimiao-comm:extractProto
+> Task :bilimiao-comm:generateDebugProto
+> Task :DanmakuFlameMaster:bundleLibCompileToJarDebug
+> Task :bilimiao-comm:compileDebugKotlin
+
+The Daemon will expire after the build after running out of JVM Metaspace.
+The project memory settings are likely not configured or are configured to an insufficient value.
+The daemon will restart for the next build, which may increase subsequent build times.
+These settings can be adjusted by setting 'org.gradle.jvmargs' in 'gradle.properties'.
+The currently configured max heap space is '1.6 GiB' and the configured max metaspace is '256 MiB'.
+For more information on how to set these values, please refer to https://docs.gradle.org/8.9/userguide/build_environment.html#sec:configuring_jvm_memory in the Gradle documentation.
+To disable this warning, set 'org.gradle.daemon.performance.disable-logging=true'.
+
+> Task :bilimiao-comm:compileDebugKotlin
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/bangumi/DimensionXInfo.kt:7:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/bangumi/EpisodeInfo.kt:8:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/bangumi/SeasonInfo.kt:7:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/comm/bili/BadgeInfo.kt:7:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:8:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:13:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:18:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:23:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:29:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListFrom.kt:35:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListInfo.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListItemInfo.kt:7:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/player/PlayListItemInfo.kt:19:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/region/RegionChildrenInfo.kt:10:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/region/RegionInfo.kt:10:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/user/MemberInfo.kt:7:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/user/MemberInfo.kt:25:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/user/MemberInfo.kt:34:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/user/UserEmoteInfo.kt:7:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/UgcEpisodeInfo.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/UgcSeasonInfo.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/UgcSectionInfo.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/VideoCommentReplyInfo.kt:9:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/VideoCommentReplyInfo.kt:38:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/VideoCommentReplyInfo.kt:47:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/VideoCommentReplyInfo.kt:55:5 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/VideoOwnerInfo.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/entity/video/VideoStatInfo.kt:6:1 Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/mypage/MyPageConfigInfo.kt:12:16 'var menus: List<MenuItemPropInfo>?' is deprecated. 请使用menu.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/network/BiliGRPCConfig.kt:168:29 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/network/BiliGRPCConfig.kt:171:25 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/network/BiliGRPCConfig.kt:180:54 'fun toInt(): Int' is deprecated. Conversion of Char to Number is deprecated. Use Char.code property instead.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/store/PlayListStore.kt:269:29 Condition is always 'true'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/store/model/DateModel.kt:20:21 'constructor(p0: Int, p1: Int, p2: Int): Date' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/store/model/DateModel.kt:23:21 'var year: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/store/model/DateModel.kt:24:22 'var month: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/store/model/DateModel.kt:25:26 'var date: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:7:8 'class ExternalCacheDiskCacheFactory : DiskLruCacheFactory' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:54:51 'class ExternalCacheDiskCacheFactory : DiskLruCacheFactory' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:83:35 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.Array<(out) java.io.File!>?'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:91:29 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.Array<(out) java.io.File!>?'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:117:28 'fun setScale(p0: Int, p1: Int): BigDecimal!' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:117:51 'static field ROUND_HALF_UP: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:122:28 'fun setScale(p0: Int, p1: Int): BigDecimal!' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:122:51 'static field ROUND_HALF_UP: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:127:28 'fun setScale(p0: Int, p1: Int): BigDecimal!' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:127:51 'static field ROUND_HALF_UP: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:130:24 'fun setScale(p0: Int, p1: Int): BigDecimal!' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:130:47 'static field ROUND_HALF_UP: Int' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/GlideCacheUtil.kt:143:41 Java type mismatch: inferred type is 'kotlin.Array<(out) java.io.File!>?', but 'kotlin.Array<java.io.File>' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/HtmlTagHandler.kt:256:43 'fun getDrawable(p0: Int): Drawable!' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/HtmlTagHandler.kt:290:62 'fun getColorStateList(p0: Int): ColorStateList' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/HtmlTagHandler.kt:308:21 Condition is always 'true'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/HtmlTagHandler.kt:330:21 Condition is always 'true'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/HtmlTagHandler.kt:346:35 Identity equality for arguments of types 'kotlin.Char' and 'kotlin.Char' is deprecated.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-comm/src/main/java/com/a10miaomiao/bilimiao/comm/utils/ImageSaveUtil.kt:181:40 'static field ACTION_MEDIA_SCANNER_SCAN_FILE: String' is deprecated. Deprecated in Java.
+
+> Task :bilimiao-comm:javaPreCompileDebug
+> Task :bilimiao-comm:compileDebugJavaWithJavac
+> Task :bilimiao-comm:bundleLibCompileToJarDebug
+> Task :bilimiao-compose:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :bilimiao-compose:generateDebugBuildConfig
+> Task :bilimiao-cover:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :bilimiao-cover:generateDebugBuildConfig
+
+> Task :bilimiao-cover:compileDebugKotlin
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverActivity.kt:33:36 'static fun getExternalStorageDirectory(): File!' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverActivity.kt:85:39 'fun String.toUpperCase(): String' is deprecated. Use uppercase() instead.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverActivity.kt:101:55 'fun String.toUpperCase(): String' is deprecated. Use uppercase() instead.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverActivity.kt:174:63 Unchecked cast of 'cn.a10miaomiao.bilimiao.cover.CoverViewModel' to 'T'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverActivity.kt:243:36 'static field ACTION_MEDIA_SCANNER_SCAN_FILE: String' is deprecated. Deprecated in Java.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverActivity.kt:330:18 This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-cover/src/main/java/cn/a10miaomiao/bilimiao/cover/CoverViewModel.kt:110:31 'fun String.toUpperCase(): String' is deprecated. Use uppercase() instead.
+
+> Task :bilimiao-cover:javaPreCompileDebug
+> Task :bilimiao-cover:compileDebugJavaWithJavac
+> Task :bilimiao-cover:bundleLibCompileToJarDebug
+> Task :bilimiao-download:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :bilimiao-download:generateDebugBuildConfig
+
+> Task :bilimiao-download:compileDebugKotlin
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadManager.kt:138:17 Condition is always 'true'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:110:9 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.Array<(out) java.io.File!>?'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:122:16 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.Array<(out) java.io.File!>?'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:131:36 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:132:35 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'java.io.File?'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:132:35 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:157:27 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:207:29 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:248:39 Java type mismatch: inferred type is 'kotlin.String?', but 'kotlin.String' was expected.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:391:17 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.Array<(out) java.io.File!>?'.
+w: file:///home/user/Doubao/chats/2951121666/bilimiao2/bilimiao-download/src/main/java/cn/a10miaomiao/bilimiao/download/DownloadService.kt:391:17 Identity equality for arguments of types 'kotlin.Int' and 'kotlin.Int' is deprecated.
+
+> Task :bilimiao-download:javaPreCompileDebug
+> Task :bilimiao-download:compileDebugJavaWithJavac
+> Task :bilimiao-download:bundleLibCompileToJarDebug
+> Task :bilimiao-compose:compileDebugKotlin
+e: java.lang.OutOfMemoryError: Metaspace
+	at org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir(FirJavaFacade.kt:190)
+	at org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider.extractClassMetadata$lambda$6(JvmClassFileBasedSymbolProvider.kt:170)
+	at org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider$$Lambda$7300/0x00007f8e690b0f60.invoke(Unknown Source)
+	at org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider.classCache$lambda$6(AbstractFirDeserializedSymbolProvider.kt:165)
+	at org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider$$Lambda$7135/0x00007f8e69651e08.invoke(Unknown Source)
+	at org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCacheWithPostCompute.getValue(FirThreadUnsafeCachesFactory.kt:60)
+	at org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider.getClass(AbstractFirDeserializedSymbolProvider.kt:314)
+	at org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider.getClass$default(AbstractFirDeserializedSymbolProvider.kt:297)
+	at org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider.getClassLikeSymbolByClassId(AbstractFirDeserializedSymbolProvider.kt:371)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider.computeClass(FirCachingCompositeSymbolProvider.kt:147)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider.access$computeClass(FirCachingCompositeSymbolProvider.kt:27)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider$special$$inlined$createCache$1.invoke(FirCachesFactory.kt:73)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider$special$$inlined$createCache$1.invoke(FirCachesFactory.kt:71)
+	at org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCache.getValue(FirThreadUnsafeCachesFactory.kt:40)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider.getClassLikeSymbolByClassId(FirCachingCompositeSymbolProvider.kt:174)
+	at org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope.processClassifiersFromImportsByName(FirAbstractImportingScope.kt:60)
+	at org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope.processClassifiersByNameWithSubstitution(FirAbstractSimpleImportingScope.kt:29)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl.resolveUserTypeToSymbol(FirTypeResolverImpl.kt:141)
+	at org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl.resolveType(FirTypeResolverImpl.kt:444)
+	at org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer.resolveType(FirSpecificTypeResolverTransformer.kt:134)
+	at org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer.transformTypeRef(FirSpecificTypeResolverTransformer.kt:95)
+	at org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer.transformTypeRef(FirSpecificTypeResolverTransformer.kt:38)
+	at org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer.transformTypeRefWithNullability(FirDefaultTransformer.kt:31)
+	at org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer.transformUserTypeRef(FirDefaultTransformer.kt:43)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall(AbstractFirSpecificAnnotationResolveTransformer.kt:322)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall(AbstractFirSpecificAnnotationResolveTransformer.kt:317)
+	at org.jetbrains.kotlin.fir.resolve.transformers.plugin.AbstractFirSpecificAnnotationResolveTransformer.transformAnnotationCall(AbstractFirSpecificAnnotationResolveTransformer.kt:46)
+	at org.jetbrains.kotlin.fir.expressions.FirAnnotationCall.transform(FirAnnotationCall.kt:44)
+	at org.jetbrains.kotlin.fir.visitors.FirTransformerUtilKt.transformInplace(FirTransformerUtil.kt:20)
+	at org.jetbrains.kotlin.fir.visitors.FirTransformerUtilKt.transformInplace-aLnlfrU(FirTransformerUtil.kt:28)
+	at org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl.transformAnnotations(FirSimpleFunctionImpl.kt:119)
+	at org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl.transformAnnotations(FirSimpleFunctionImpl.kt:32)
+
+
+> Task :bilimiao-compose:compileDebugKotlin FAILED
+w: Detected multiple Kotlin daemon sessions at 
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':bilimiao-compose:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Not enough memory to run compilation.  Try to increase it via 'gradle.properties':
+     org.gradle.jvmargs=-Xmx<size>
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.9/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 13m 55s
+89 actionable tasks: 85 executed, 4 up-to-date

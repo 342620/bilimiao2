@@ -203,6 +203,12 @@ private class ReplyDetailContentViewModel(
                 val newList = list.data.value.toMutableList()
                 newList[index] = newItem
                 list.data.value = newList
+                // 点赞成功/取消点赞的无障碍反馈
+                if (newAction == 1) {
+                    GlobalToaster.show("点赞成功")
+                } else {
+                    GlobalToaster.show("已取消点赞")
+                }
             } else {
                 GlobalToaster.show(res.message)
             }

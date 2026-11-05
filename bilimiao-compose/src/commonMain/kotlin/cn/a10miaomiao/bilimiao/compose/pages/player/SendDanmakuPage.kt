@@ -31,6 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -104,6 +107,24 @@ internal class SendDanmakuViewModel(
         SelectItemInfo("#CC0273", 0xCC0273),
         SelectItemInfo("#222222", 0x222222),
         SelectItemInfo("#9B9B9B", 0x9B9B9B),
+    )
+
+    /** 弹幕颜色的中文名，只用于读屏播报，界面上仍然显示色值 */
+    internal val danmakuColorNames = mapOf(
+        0xFFFFFF to "白色",
+        0xFE0302 to "红色",
+        0xFF7204 to "橙色",
+        0xFFAA02 to "橙黄色",
+        0xFFD302 to "金黄色",
+        0xFFFF00 to "黄色",
+        0xA0EE00 to "黄绿色",
+        0x00CD00 to "绿色",
+        0x019899 to "青色",
+        0x4266BE to "蓝色",
+        0x89D5FF to "浅蓝色",
+        0xCC0273 to "紫红色",
+        0x222222 to "深灰色",
+        0x9B9B9B to "灰色",
     )
 
     internal val danmakuTextSizeList = listOf<SelectItemInfo<Float>>(
@@ -345,6 +366,10 @@ internal fun SendDanmakuPageContent(
                                 text = it.label,
                                 modifier = Modifier.background(Color(it.value.toLong() or 0xFF000000))
                             )
+                        },
+                        modifier = Modifier.clearAndSetSemantics {
+                            contentDescription = viewModel.danmakuColorNames[it.value] ?: it.label
+                            selected = danmakuColor == it.value
                         }
                     )
                 }

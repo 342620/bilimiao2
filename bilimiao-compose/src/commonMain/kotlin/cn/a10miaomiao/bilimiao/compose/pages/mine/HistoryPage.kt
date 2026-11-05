@@ -8,6 +8,8 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -625,9 +627,19 @@ private fun CalendarRowView(
                     MaterialTheme.colorScheme.onBackground
                 else
                     MaterialTheme.colorScheme.outlineVariant
+                val dateDesc = buildString {
+                    append("${date.monthNumber}月${date.dayOfMonth}日")
+                    append(" $dateHeader")
+                    if (date == currentDate) append("，今天")
+                }
                 Column(
                     modifier = Modifier
-                        .size(40.dp),
+                        .size(40.dp)
+                        .then(
+                            if (isEnable) Modifier.clickable { onChangeDate(date) }
+                            else Modifier
+                        )
+                        .clearAndSetSemantics { contentDescription = dateDesc },
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
@@ -656,11 +668,7 @@ private fun CalendarRowView(
                         Box(
                             modifier = Modifier
                                 .size(24.dp)
-                                .clip(CircleShape)
-                                .run {
-                                    if (isEnable) clickable { onChangeDate(date) }
-                                    else this
-                                },
+                                .clip(CircleShape),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
