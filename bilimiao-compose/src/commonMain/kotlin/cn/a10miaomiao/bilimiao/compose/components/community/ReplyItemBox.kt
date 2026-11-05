@@ -288,7 +288,7 @@ fun ReplyItemBox(
         Modifier
             .clearAndSetSemantics {
                 text = annotatedText
-                customActions = customActions
+                this.customActions = customActions
             }
             .clickable(onClick = onClick)
             .padding(10.dp)
