@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.customActions
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -85,7 +84,6 @@ class ReplyItemBoxContentInfo(
         val url: String
     )
 
-    @Composable
     fun toAnnotatedTextNode(): List<AnnotatedTextNode> {
         val regex = Regex(
             """(?i)""" +  // 忽略大小写
@@ -145,7 +143,6 @@ class ReplyItemBoxContentInfo(
     }
 
 
-    @Composable
     private fun getLinkUrl(text: String): String {
         val url = if (text.startsWith("http")) {
             text
@@ -295,10 +292,9 @@ fun ReplyItemBox(
     }
     Row(
         Modifier
-            .semantics {
-                clearAndSetSemantics {}
+            .clearAndSetSemantics {
                 text = annotatedText
-                this.customActions = customActions
+                customActions = customActions
             }
             .clickable(onClick = onClick)
             .padding(10.dp)
