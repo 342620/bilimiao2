@@ -10,6 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -113,13 +115,14 @@ fun BangumiEpisodeItem(
                     ) {
                         Icon(
                             Icons.Filled.MoreVert,
-                            null,
+                            "更多",
                             tint = MaterialTheme.colorScheme.onBackground,
                         )
                     }
                     DropdownMenu(
                         expanded = expandedMoreMenu,
                         onDismissRequest = { expandedMoreMenu = false },
+                        modifier = Modifier.semantics { paneTitle = "更多" },
                     ) {
                         DropdownMenuItem(
                             onClick = {

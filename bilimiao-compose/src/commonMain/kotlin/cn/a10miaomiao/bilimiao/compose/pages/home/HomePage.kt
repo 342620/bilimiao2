@@ -41,6 +41,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -379,6 +384,10 @@ private fun HomePageContent(
                     },
                     selected = pagerState.currentPage == index,
                     onClick = { combinedTabClick(index) },
+                    modifier = Modifier.clearAndSetSemantics {
+                        contentDescription = tab.name
+                        selected = pagerState.currentPage == index
+                    },
                 )
             }
         }
@@ -408,6 +417,7 @@ private fun HomePageContent(
                     updateState.dismiss()
                 }
             },
+            modifier = Modifier.semantics { paneTitle = "检查更新" },
             title = {
                 Text(text = "有新版本：" + version.versionName)
             },

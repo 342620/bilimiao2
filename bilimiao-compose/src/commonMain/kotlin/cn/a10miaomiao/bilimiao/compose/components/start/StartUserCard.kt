@@ -228,7 +228,7 @@ private fun StartUserMessageBox(
         val totalCount = messageState.totalCount()
         Image(
             painter = painterResource(Res.drawable.ic_message),
-            contentDescription = "message",
+            contentDescription = "消息",
             modifier = Modifier
                 .size(40.dp)
                 .padding(end = 8.dp)

@@ -55,6 +55,7 @@ fun VideoStatBox(
             } else {
                 MaterialTheme.colorScheme.primary
             },
+            selected = reqUser.like != 0,
             onClick = {
                 viewModel.requestLike(arc, reqUser)
             },
@@ -68,6 +69,7 @@ fun VideoStatBox(
             } else {
                 MaterialTheme.colorScheme.primary
             },
+            selected = reqUser.coin != 0,
             onClick = {
                 viewModel.openCoinDialog(
                     arc.aid.toString(),
@@ -84,6 +86,7 @@ fun VideoStatBox(
             } else {
                 MaterialTheme.colorScheme.primary
             },
+            selected = reqUser.favorite != 0,
             onClick = {
                 viewModel.openAddFavoriteDialog(arc.aid.toString())
             },
@@ -107,14 +110,16 @@ fun VideoStatButton(
     text: String,
     description: String,
     color: Color,
+    selected: Boolean = false,
     onClick: () -> Unit,
 ) {
+    val contentDesc = if (selected) "已$description" else description
     ElevatedAssistChip(
         onClick = onClick,
         leadingIcon = {
             Icon(
                 imageVector = icon,
-                contentDescription = description,
+                contentDescription = contentDesc,
                 modifier = Modifier.size(24.dp),
                 tint = color,
             )

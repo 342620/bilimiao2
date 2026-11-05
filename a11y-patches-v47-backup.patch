@@ -1,0 +1,1551 @@
+diff --git a/ACCESSIBILITY_PATCHES.md b/ACCESSIBILITY_PATCHES.md
+index f9df76e3..42ec0de3 100644
+--- a/ACCESSIBILITY_PATCHES.md
++++ b/ACCESSIBILITY_PATCHES.md
+@@ -476,3 +476,197 @@ export PATH=$JAVA_HOME/bin:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/
+ - ABI 过滤器临时缩减为仅 arm64-v8a，是否恢复全 ABI 未确认
+ - 抽屉菜单打开时 TalkBack 不知道抽屉打开了（paneTitle 加在内容层但可能不够明显），需研究更好的方案
+ - 搜索遮罩点击关闭的无障碍标签已加，需验证是否生效
++
++## v44: 从 2.4.8.1 稳定版覆盖无障碍优化点（2026-09-15）
++
++对比 2.4.8.1 稳定版分支上的无障碍优化，找出 2.5 Alpha 上缺失的优化点并补充。
++
++### 已覆盖的优化点
++
++1. **首页 Tab 重复语义修复**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/home/HomePage.kt`
++   - 修改：给 Tab 组件加 `clearAndSetSemantics { contentDescription = tab.name; selected = ... }`
++   - 原因：Material3 Tab 组件默认会同时读文字和选中态，导致重复语义
++
++2. **主题设置页 SegmentedButton 重复语义修复**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/ThemeSettingPage.kt`
++   - 修改：给深色模式和应用操作栏风格的两个 SegmentedButton 加 `clearAndSetSemantics`
++   - 原因：SegmentedButton 默认会同时读文字和选中态，导致重复语义
++
++3. **抽屉菜单 paneTitle**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/StartViewContent.kt`
++   - 修改：给抽屉菜单的 LazyColumn 加 `.semantics { paneTitle = "菜单" }`
++   - 原因：视障用户打开抽屉菜单时，TalkBack 不知道这是菜单页面
++
++4. **视频详情页底部操作按钮选中态语义**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoStatBox.kt`
++   - 修改：给 VideoStatButton 加 `selected` 参数，Icon 的 contentDescription 动态变为"已点赞"/"已投币"/"已收藏"
++   - 原因：已点赞/投币/收藏的按钮没有状态反馈，视障用户不知道是否操作成功
++
++### 2.5 Alpha 已覆盖或实现更好的优化点
++
++- 视频卡片语义简化（2.5 Alpha 用英文逗号+空格分隔，更简洁）
++- 评论区焦点合并 + CustomAccessibilityAction（2.5 Alpha 实现完整）
++- 下载页 FilterChip 重复语义修复
++- 主题颜色按钮选中态
++- 卡片式/列表式切换选中态
++- 自动连播开关焦点合并
++- 全局页面 paneTitle
++- 对话框 paneTitle
++- 图片预览
++- 气泡通知无障碍播报（2.5 Alpha 用 GlobalToaster + AccessibilityEvent）
++- UP 主头像标签
++- 搜索遮罩标签
++- 视频详情页标题修复（不读 AV/BV 号）
++- 视频详情页统计文字焦点合并（2.5 Alpha 合并为一个焦点，更好）
++- Tab 栏 TalkBack 误触发滚动修复
++- 播控栏无障碍焦点保持（2.5 Alpha 用 PlayerA11yFocusContainer + PlayerControlsVisibilityPolicy）
++- 音频焦点 + TalkBack 音频闪避
++- 耳机线控 + 完整媒体通知
++- 表情面板无障碍
++- 分P按钮标签（2.5 Alpha 用中文"展开分P列表"，比 2.4.8.1 的"More"更好）
++- 播放/暂停按钮动态标签
++- 视频画面区域动态标签（展开/收起播控栏）
++- 全屏按钮动态标签
++
++### 注意事项
++
++- 2.4.8.1 用旧版 GSYVideoPlayer（View 体系），2.5 Alpha 用新版 Compose 播放器，播放器相关无障碍优化需分别适配，不能直接复制代码
++- 2.4.8.1 用 A11yPopTip 包装 PopTip，2.5 Alpha 用 GlobalToaster expect/actual + AccessibilityEvent，实现方式不同但功能等价
++- 2.4.8.1 用单源集 src/main/java，2.5 Alpha 用 KMP src/commonMain/kotlin + src/androidMain/kotlin，文件路径不同
++
++## v45: 从 fork/a11y-2.4.8.1 合入消息中心无障碍优化（2026-09-15）
++
++从用户 GitHub 仓库的 `fork/a11y-2.4.8.1` 分支合入消息中心页面的无障碍优化。
++
++### 优化点
++
++1. **消息页整条消息合并为一个焦点并补操作菜单**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/components/MessageItemBox.kt`
++   - 修改：给 Row 加 `clearAndSetSemantics`，整条消息（头像、昵称、动作、评论内容、右侧被评论内容、时间）合并为一个焦点
++   - 新增参数：`detailActionLabel`（右侧内容操作名称）、`messageActionLabel`（评论内容操作名称）、`spokenActionText`（播报时用的动作词）
++   - 自定义操作菜单：查看用户主页、查看原评论/内容来源、查看详情/展开楼层
++   - 播报顺序：昵称、对方内容、动作、被回复内容、时间（动作放在两段内容中间，区分哪段是对方说的、哪段是自己被回复的）
++
++2. **回复消息播报优化**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/ReplyMessageContent.kt`
++   - 修改：传入 `detailActionLabel = "展开楼层"`、`messageActionLabel = "查看被回复的评论"`、`spokenActionText = "回复"`
++   - 原因：动作词只说"回复"，后面直接接自己那条评论的内容，更简洁
++
++3. **@我的消息操作菜单**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/AtMessageContent.kt`
++   - 修改：传入 `detailActionLabel = "查看详情"`、`messageActionLabel = "查看内容来源"`
++
++4. **点赞消息操作菜单**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/LikeMessageContent.kt`
++   - 修改：传入 `detailActionLabel = "查看详情"`、`messageActionLabel = null`（点赞消息没有可点开的评论内容）
++
++5. **消息中心顶部 Tab 重复语义修复**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/MessagePage.kt`
++   - 修改：给 Tab 组件加 `clearAndSetSemantics { contentDescription = ...; selected = ... }`
++   - contentDescription 包含未读消息数，如"回复我的，3 条未读"
++   - 原因：Material3 Tab 组件默认会同时读文字和选中态，导致重复语义
++
++### 来源提交
++
++- `5adb38fd fix(a11y): 消息页整条消息合并为一个焦点并补操作菜单`
++- `18675efc fix(a11y): 回复消息播报改为"昵称、对方内容、回复、自己内容、时间"，动作词只说回复`
++
++---
++
++## v46：从 2.4.8.1 稳定版合入无障碍优化点（第二轮）
++
++### 优化内容
++
++1. **追番更多按钮补无障碍标签**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/bangumi/BangumiItemBox.kt`
++   - 修改：更多按钮 contentDescription 从 null 改为"更多"，DropdownMenu 加 paneTitle="更多"
++
++2. **追番剧集更多按钮下拉菜单加窗口标题**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/bangumi/components/BangumiEpisodeItem.kt`
++   - 修改：DropdownMenu 加 paneTitle="更多"（按钮本身已有"更多"标签）
++
++3. **自动连播开关合并为一个焦点（3处）**
++   - 文件：
++     - `bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/WatchLaterPage.kt`
++     - `bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserFavouriteDetailContent.kt`
++     - `bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserMedialistDetailContent.kt`
++   - 修改：把"自动连播"文字和 Switch 包在一个 Row 里，加 clearAndSetSemantics
++   - contentDescription = "自动连播"，role = Role.Switch，toggleableState 表达开关状态
++   - Switch 的 onCheckedChange 设为 null，点击行为由整个 Row 的 clickable 处理
++   - 原因：原来文字和开关被拆成两个无障碍焦点，体验割裂
++
++4. **历史日历日期合并为一个焦点**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/HistoryPage.kt`
++   - 修改：CalendarRowView 里整个日期 Column 加 clearAndSetSemantics
++   - contentDescription = "X月X日 周X"（今天会带上"，今天"）
++   - 去掉了内部日期数字 Box 的 clickable，避免两个可点击焦点
++   - 原因：原来星期和日号被拆成两个焦点
++
++5. **11处 Compose 下拉菜单补窗口标题（paneTitle）**
++   - 文件及标题：
++     - `BangumiItemBox.kt` - "更多"
++     - `BangumiEpisodeItem.kt` - "更多"
++     - `ReplyDetailContent.kt` - "列表排序"
++     - `DownloadBangumiCreatePage.kt` - "选择画质"
++     - `DownloadDetailItem.kt` - "更多"
++     - `TagFollowContent.kt` - "关注操作"
++     - `SelectProxyServerPage.kt` - "选择upos视频服务器"
++     - `CustomTime.kt` - "选择时间"
++     - `VideoDownloadDialog.kt` - "选择画质"
++     - `VideoReplyTitleBar.kt` - "列表排序"
++     - `InternationalDialingPrefixSelect.kt` - "选择国家区号"
++   - 修改：给 DropdownMenu 加 `modifier = Modifier.semantics { paneTitle = "..." }`
++   - 原因：下拉菜单弹出时 TalkBack 不知道这是一个新的窗口/面板
++
++### 已确认 2.5 Alpha 已有、无需重复修改的点
++
++- 评论详情页左上角关闭按钮：已有 contentDescription = "关闭"
++- 顶栏返回/菜单按钮：NavigationIcon 组件已有 contentDescription（"返回"/"菜单"）
++- 表情面板：已有 contentDescription = item.text
++- 搜索卡片 kotlin.Unit：with(StringBuilder()) 最后有 .toString()
++- 画中画播放/暂停：由 MediaSession 接管
++
++### 来源提交（fork/a11y-2.4.8.1 分支）
++
++- `1bb56341 fix(a11y): 追番更多按钮补标签、连播行合并焦点、历史日期合并`
++- `364735c5 fix(a11y): 给剩余 11 处 Compose 下拉菜单补窗口标题`
++- `e3461d48 fix(a11y): 顶栏左上角返回/菜单按钮补无障碍名称`
++- `fc98e1b8 fix(a11y): 评论详情页左上角关闭按钮补无障碍名称`
++
++---
++
++## v47：从 2.4.8.1 合入动态卡片无障碍优化
++
++### 优化内容
++
++1. **动态卡片整张合并为一个焦点**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/dyanmic/DyanmicItemCard.kt`
++   - 修改：在 MiaoCard 外面包一层 Box，加 clearAndSetSemantics
++   - 整张卡片只保留一条播报文案和一组读屏操作
++   - 播报顺序：昵称、发布时间、正文、（含 N 张图片 / 视频标题）、点赞、评论、转发
++
++2. **动态卡片自定义操作菜单**
++   - 查看用户主页（如果有作者 mid）
++   - 查看图片（如果有图片）
++   - 点赞 / 取消点赞（如果传入了 onLikeClick）
++   - 评论（如果传入了 onCommentClick）
++   - 双击卡片打开动态详情
++
++3. **新增 DynamicItemSemantics.kt**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/dyanmic/DynamicItemSemantics.kt`
++   - 定义 DynamicItemA11yInfo 数据类和 DynamicItem.toA11yInfo() 扩展函数
++   - 从动态的各个 module 里抽取无障碍描述与操作需要的数据
++   - 支持转发动态（递归抽取被转发内容的图片/视频标题）
++
++4. **新增 ImageCountText.kt**
++   - 文件：`bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/image/ImageCountText.kt`
++   - imageCountText(count)：1 张读"含一张图片"，多张读"共 N 张图片"
++   - imagePositionText(index, count)："图片第 N 张，共 M 张"
++   - 评论区、动态卡片、大图预览共用同一套说法
++
++### 来源提交（fork/a11y-2.4.8.1 分支）
++
++- `6effed65 fix(a11y): 动态卡片多图读"共N张图片"，单图读"含一张图片"`
++- `ecdb2909 fix(a11y): 动态卡片图片文案改回"含一张图片/含N张图片"`
++- `8ae02c6a fix(a11y): 修正一批无障碍问题并补齐语义`（动态卡片整体合并焦点）
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/StartViewContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/StartViewContent.kt
+index 1f081c54..7f09726a 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/StartViewContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/StartViewContent.kt
+@@ -185,7 +185,8 @@ private fun StartIndexList(
+ 
+     LazyColumn(
+         state = listState,
+-        modifier = modifier,
++        modifier = modifier
++            .semantics { paneTitle = "菜单" },
+         contentPadding = WindowInsets
+             .safeDrawing
+             .asPaddingValues()
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/bangumi/BangumiItemBox.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/bangumi/BangumiItemBox.kt
+index 66c9efd8..bc156e27 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/bangumi/BangumiItemBox.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/bangumi/BangumiItemBox.kt
+@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.layout.ContentScale
+ import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.paneTitle
+ import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.unit.dp
+ import cn.a10miaomiao.bilimiao.compose.common.foundation.htmlText
+@@ -151,12 +152,13 @@ fun BangumiItemBox(
+                             Icon(
+                                 tint = MaterialTheme.colorScheme.onBackground,
+                                 imageVector = Icons.Filled.MoreVert,
+-                                contentDescription = null,
++                                contentDescription = "更多",
+                             )
+                         }
+                         DropdownMenu(
+                             expanded = expandedMenu.value,
+                             onDismissRequest = { expandedMenu.value = false },
++                            modifier = Modifier.semantics { paneTitle = "更多" },
+                         ) {
+                             moreMenu.filterNotNull().forEach { menu ->
+                                 DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemBox.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemBox.kt
+index 79a6209c..1ad1a874 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemBox.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemBox.kt
+@@ -290,6 +290,8 @@ fun ReplyItemBox(
+                     replyCount = count,
+                     time = time,
+                     location = location,
++                    isUpper = isUpper,
++                    cardLabels = cardLabels,
+                 )
+                 customActions = buildList {
+                     add(CustomAccessibilityAction("查看用户主页") { onAvatarClick(); true })
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemantics.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemantics.kt
+index 2c0510d8..44edb19f 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemantics.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemantics.kt
+@@ -5,11 +5,12 @@ import androidx.compose.ui.text.LinkAnnotation
+ import androidx.compose.ui.text.buildAnnotatedString
+ import androidx.compose.ui.text.withLink
+ import cn.a10miaomiao.bilimiao.compose.common.foundation.AnnotatedTextNode
++import cn.a10miaomiao.bilimiao.compose.components.image.imageCountText
+ 
+ /**
+  * 评论项无障碍合并语义的纯函数
+- * 拼接规则：昵称, 评论内容, 图片, 点赞/已点赞, X条回复, 时间发布于IP
+- * 间隔：英文逗号加空格
++ * 拼接规则：置顶等卡片标, 昵称（视频作者加"UP主"前缀）, 评论内容, 图片, 点赞/已点赞, X条回复, 时间发布于IP
++ * 昵称与内容之间用"说:"引出；间隔：英文逗号加空格
+  */
+ object ReplyItemSemantics {
+ 
+@@ -25,15 +26,25 @@ object ReplyItemSemantics {
+         replyCount: Long,
+         time: String,
+         location: String,
++        isUpper: Boolean = false,
++        cardLabels: List<String> = emptyList(),
+     ): String {
+         val parts = mutableListOf<String>()
+-        parts.add(uname)
++        // 置顶这类接口给的卡片标放在最前面；UP主已经由 isUpper 表达，这里跳过避免重复
++        cardLabels.filter { it.isNotBlank() && it != "UP主" }
++            .takeIf { it.isNotEmpty() }
++            ?.let { parts.add(it.joinToString("、")) }
++        // 视频作者在自己视频下评论时，昵称带"UP主"前缀；昵称与内容之间用"说:"引出
++        val namePart = if (isUpper) "UP主$uname" else uname
+         if (content.isNotBlank()) {
+-            parts.add(content)
++            // 名字和内容作为同一段，避免中间再插逗号
++            parts.add("${namePart}说: $content")
++        } else {
++            parts.add(namePart)
+         }
+-        when {
+-            pictureCount == 1 -> parts.add("含一张图片")
+-            pictureCount > 1 -> parts.add("共${pictureCount}张图片")
++        val imageText = imageCountText(pictureCount)
++        if (imageText.isNotEmpty()) {
++            parts.add(imageText)
+         }
+         parts.add(if (isLike) "已点赞$like" else "点赞$like")
+         parts.add("${replyCount}条回复")
+@@ -55,12 +66,22 @@ object ReplyItemSemantics {
+         replyCount: Long,
+         time: String,
+         location: String,
++        isUpper: Boolean = false,
++        cardLabels: List<String> = emptyList(),
+     ): AnnotatedString {
+         return buildAnnotatedString {
+-            append(uname)
++            // 置顶这类接口给的卡片标放在最前面；UP主已经由 isUpper 表达，这里跳过避免重复
++            cardLabels.filter { it.isNotBlank() && it != "UP主" }
++                .takeIf { it.isNotEmpty() }
++                ?.let {
++                    append(it.joinToString("、"))
++                    append(", ")
++                }
++            // 视频作者在自己视频下评论时，昵称带"UP主"前缀；昵称与内容之间用"说:"引出
++            append(if (isUpper) "UP主$uname" else uname)
+             // 评论内容（保留链接）
+             if (!contentNodes.isNullOrEmpty()) {
+-                append(", ")
++                append("说: ")
+                 contentNodes.forEach { node ->
+                     when (node) {
+                         is AnnotatedTextNode.Text -> append(node.text)
+@@ -77,15 +98,9 @@ object ReplyItemSemantics {
+                 }
+             }
+             // 图片
+-            when {
+-                pictureCount == 1 -> {
+-                    append(", ")
+-                    append("含一张图片")
+-                }
+-                pictureCount > 1 -> {
+-                    append(", ")
+-                    append("共${pictureCount}张图片")
+-                }
++            if (pictureCount > 0) {
++                append(", ")
++                append(imageCountText(pictureCount))
+             }
+             // 点赞
+             append(", ")
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/dyanmic/DyanmicItemCard.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/dyanmic/DyanmicItemCard.kt
+index 6da49663..6fd29997 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/dyanmic/DyanmicItemCard.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/dyanmic/DyanmicItemCard.kt
+@@ -1,16 +1,24 @@
+ package cn.a10miaomiao.bilimiao.compose.components.dyanmic
+ 
+-import androidx.compose.foundation.background
+-import androidx.compose.foundation.clickable
+-import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.padding
+-import androidx.compose.foundation.shape.RoundedCornerShape
+-import androidx.compose.material3.MaterialTheme
+ import androidx.compose.runtime.Composable
++import androidx.compose.runtime.remember
+ import androidx.compose.ui.Modifier
+-import androidx.compose.ui.draw.clip
++import androidx.compose.ui.semantics.CustomAccessibilityAction
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.customActions
++import androidx.compose.ui.semantics.onClick
++import androidx.compose.ui.semantics.text
++import androidx.compose.ui.text.AnnotatedString
+ import androidx.compose.ui.unit.dp
++import cn.a10miaomiao.bilimiao.compose.common.localPageNavigation
++import cn.a10miaomiao.bilimiao.compose.components.image.provider.localImagePreviewerController
+ import cn.a10miaomiao.bilimiao.compose.components.miao.MiaoCard
++import cn.a10miaomiao.bilimiao.compose.components.zoomable.previewer.VerticalDragType
++import cn.a10miaomiao.bilimiao.compose.components.zoomable.previewer.rememberPreviewerState
++import cn.a10miaomiao.bilimiao.compose.pages.user.UserSpacePage
+ 
+ @Composable
+ fun DynamicItemCard(
+@@ -18,17 +26,74 @@ fun DynamicItemCard(
+     item: bilibili.app.dynamic.v2.DynamicItem,
+     isJumpToUser: Boolean = true,
+     onClick: () -> Unit,
++    onLikeClick: (() -> Unit)? = null,
++    onCommentClick: (() -> Unit)? = null,
+ ) {
+-    MiaoCard(
++    val a11yInfo = remember(item) { item.toA11yInfo() }
++    val pageNavigation = localPageNavigation()
++    val previewerController = localImagePreviewerController()
++    val previewerState = rememberPreviewerState(
++        verticalDragType = VerticalDragType.Down,
++        pageCount = { a11yInfo.imageModels.size },
++        getKey = { a11yInfo.imageModels[it].originalUrl },
++    )
++    // 语义挂在卡片外层：clearAndSetSemantics 会清掉整棵子树，
++    // MiaoCard 自己那层点的语义（点击、合并）就不会再叠出来，
++    // 整张卡片只保留一条播报文案和一组读屏操作
++    Box(
+         modifier = modifier
+-            .padding(horizontal = 10.dp),
+-        onClick = onClick,
++            .fillMaxWidth()
++            .clearAndSetSemantics {
++                text = AnnotatedString(a11yInfo.description)
++                customActions = buildList {
++                    if (isJumpToUser) {
++                        a11yInfo.authorMid?.let { mid ->
++                            add(CustomAccessibilityAction("查看用户主页") {
++                                pageNavigation.navigate(UserSpacePage(id = mid))
++                                true
++                            })
++                        }
++                    }
++                    if (a11yInfo.imageModels.isNotEmpty()) {
++                        add(CustomAccessibilityAction("查看图片") {
++                            previewerController.enterTransform(
++                                state = previewerState,
++                                models = a11yInfo.imageModels,
++                                index = 0,
++                            )
++                            true
++                        })
++                    }
++                    onLikeClick?.let { like ->
++                        add(CustomAccessibilityAction(if (a11yInfo.isLiked) "取消点赞" else "点赞") {
++                            like()
++                            true
++                        })
++                    }
++                    onCommentClick?.let { comment ->
++                        add(CustomAccessibilityAction("评论") {
++                            comment()
++                            true
++                        })
++                    }
++                }
++                // 点卡片本身是打开动态详情，清掉语义后要补回点击动作，双击才有效
++                onClick(label = null) {
++                    onClick()
++                    true
++                }
++            },
+     ) {
+-        for(module in item.modules) {
+-            DynamicModuleBox(
+-                module = module,
+-                isJumpToUser = isJumpToUser,
+-            )
++        MiaoCard(
++            modifier = Modifier.padding(horizontal = 10.dp),
++            onClick = onClick,
++        ) {
++            for(module in item.modules) {
++                DynamicModuleBox(
++                    module = module,
++                    isJumpToUser = isJumpToUser,
++                )
++            }
+         }
+     }
+ }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/start/StartUserCard.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/start/StartUserCard.kt
+index 5bc3bfa3..3d0f7399 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/start/StartUserCard.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/start/StartUserCard.kt
+@@ -3,6 +3,9 @@ package cn.a10miaomiao.bilimiao.compose.components.start
+ import androidx.compose.foundation.Image
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.clickable
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.onClick
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.Column
+@@ -222,19 +225,25 @@ private fun StartUserMessageBox(
+ ) {
+     val messageStore by rememberInstance<MessageStore>()
+     val messageState by messageStore.stateFlow.collectAsState()
++    val totalCount = messageState.totalCount()
++    val msgContentDescription = if (totalCount > 0) "消息，${totalCount}条未读" else "消息"
+     Box(
+-        modifier = modifier,
++        modifier = modifier
++            .clickable(onClick = onClick)
++            .clearAndSetSemantics {
++                contentDescription = msgContentDescription
++                onClick {
++                    onClick()
++                    true
++                }
++            },
+     ) {
+-        val totalCount = messageState.totalCount()
+         Image(
+             painter = painterResource(Res.drawable.ic_message),
+-            contentDescription = "消息",
++            contentDescription = null,
+             modifier = Modifier
+                 .size(40.dp)
+-                .padding(end = 8.dp)
+-                .clickable(
+-                    onClick = onClick,
+-                )
++                .padding(end = 8.dp),
+         )
+         if (totalCount > 0) {
+             Badge(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/video/VideoItemBox.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/video/VideoItemBox.kt
+index 144a8e75..183aa8d4 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/video/VideoItemBox.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/components/video/VideoItemBox.kt
+@@ -194,7 +194,7 @@ fun VideoItemBox(
+                     Text(
+                         modifier = Modifier.padding(start = 2.dp)
+                             .semantics {
+-                                contentDescription = ",播放$playNum"
++                                contentDescription = ",${NumberUtil.converString(playNum)}观看"
+                             },
+                         text = NumberUtil.converString(playNum),
+                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+@@ -210,7 +210,7 @@ fun VideoItemBox(
+                     Text(
+                         modifier = Modifier.padding(start = 2.dp)
+                             .semantics {
+-                                contentDescription = ",弹幕$damukuNum"
++                                contentDescription = ",${NumberUtil.converString(damukuNum)}弹幕"
+                             },
+                         text = NumberUtil.converString(damukuNum),
+                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/auth/components/InternationalDialingPrefixSelect.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/auth/components/InternationalDialingPrefixSelect.kt
+index 31571bc9..0fd64c1d 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/auth/components/InternationalDialingPrefixSelect.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/auth/components/InternationalDialingPrefixSelect.kt
+@@ -10,6 +10,9 @@ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ 
+ @Composable
+ fun InternationalDialingPrefixSelect(
+@@ -28,6 +31,7 @@ fun InternationalDialingPrefixSelect(
+         DropdownMenu(
+             expanded = expanded,
+             onDismissRequest = { expanded = false },
++            modifier = Modifier.semantics { paneTitle = "选择国家区号" },
+         ) {
+             for (item in InternationalDialingPrefixList) {
+                 DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/bangumi/components/BangumiEpisodeItem.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/bangumi/components/BangumiEpisodeItem.kt
+index c4d169cc..771b4915 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/bangumi/components/BangumiEpisodeItem.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/bangumi/components/BangumiEpisodeItem.kt
+@@ -10,6 +10,8 @@ import androidx.compose.material3.*
+ import androidx.compose.runtime.*
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.layout.ContentScale
+@@ -120,6 +122,7 @@ fun BangumiEpisodeItem(
+                     DropdownMenu(
+                         expanded = expandedMoreMenu,
+                         onDismissRequest = { expandedMoreMenu = false },
++                        modifier = Modifier.semantics { paneTitle = "更多" },
+                     ) {
+                         DropdownMenuItem(
+                             onClick = {
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/MainReplyViewModel.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/MainReplyViewModel.kt
+index e8f88f5b..731a7b72 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/MainReplyViewModel.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/MainReplyViewModel.kt
+@@ -186,6 +186,12 @@ class MainReplyViewModel(
+                 if (currentReply.value?.id == newItem.id) {
+                     _currentReply.value = newItem
+                 }
++                // 成功后给一次反馈，否则读屏在点赞这一瞬间没有任何提示
++                if (newAction == 1) {
++                    GlobalToaster.show("点赞成功")
++                } else {
++                    GlobalToaster.show("已取消点赞")
++                }
+             } else {
+                 GlobalToaster.show(res.message)
+             }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/ReplyDetailListPage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/ReplyDetailListPage.kt
+index d5e21430..32726774 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/ReplyDetailListPage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/ReplyDetailListPage.kt
+@@ -126,6 +126,12 @@ private class ReplyDetailListPageViewModel(
+                         like = likeNum,
+                     )
+                     _detailData.value = newItem
++                    // 成功后给一次反馈，否则读屏在点赞这一瞬间没有任何提示
++                    if (newAction == 1) {
++                        GlobalToaster.show("点赞成功")
++                    } else {
++                        GlobalToaster.show("已取消点赞")
++                    }
+                 } else {
+                     GlobalToaster.show(res.message)
+                 }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/content/ReplyDetailContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/content/ReplyDetailContent.kt
+index 7c9dda1f..85575184 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/content/ReplyDetailContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/community/content/ReplyDetailContent.kt
+@@ -42,6 +42,8 @@ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.unit.LayoutDirection
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+@@ -203,6 +205,12 @@ private class ReplyDetailContentViewModel(
+                 val newList = list.data.value.toMutableList()
+                 newList[index] = newItem
+                 list.data.value = newList
++                // 成功后给一次反馈，否则读屏在点赞这一瞬间没有任何提示
++                if (newAction == 1) {
++                    GlobalToaster.show("点赞成功")
++                } else {
++                    GlobalToaster.show("已取消点赞")
++                }
+             } else {
+                 GlobalToaster.show(res.message)
+             }
+@@ -481,6 +489,7 @@ fun ReplyDetailContent(
+                             onDismissRequest = {
+                                 expanded.value = false
+                             },
++                            modifier = Modifier.semantics { paneTitle = "列表排序" },
+                         ) {
+                             viewModel.sortOrderList.forEach {
+                                 DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/DownloadBangumiCreatePage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/DownloadBangumiCreatePage.kt
+index 92931550..abc08991 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/DownloadBangumiCreatePage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/DownloadBangumiCreatePage.kt
+@@ -10,6 +10,8 @@ import androidx.compose.material3.*
+ import androidx.compose.runtime.*
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+@@ -459,6 +461,7 @@ internal fun DownloadBangumiCreatePageContent(
+                 DropdownMenu(
+                     expanded = expandedQualityMenu,
+                     onDismissRequest = { expandedQualityMenu = false },
++                    modifier = Modifier.semantics { paneTitle = "选择画质" },
+                 ) {
+                     acceptQuality.acceptDescription.forEachIndexed { index, s ->
+                         DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/components/DownloadDetailItem.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/components/DownloadDetailItem.kt
+index 8edfedd8..f306f177 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/components/DownloadDetailItem.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/download/components/DownloadDetailItem.kt
+@@ -11,6 +11,8 @@ import androidx.compose.material3.*
+ import androidx.compose.runtime.*
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.layout.ContentScale
+ import androidx.compose.ui.text.style.TextOverflow
+@@ -103,6 +105,7 @@ fun DownloadDetailItem(
+                         DropdownMenu(
+                             expanded = expandedMoreMenu,
+                             onDismissRequest = { expandedMoreMenu = false },
++                            modifier = Modifier.semantics { paneTitle = "更多" },
+                         ) {
+                             DropdownMenuItem(
+                                 onClick = {
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/home/HomePage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/home/HomePage.kt
+index 56eb4f6e..6dd07e34 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/home/HomePage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/home/HomePage.kt
+@@ -41,7 +41,10 @@ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.input.pointer.pointerInput
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
+ import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.selected
+ import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+@@ -381,6 +384,10 @@ private fun HomePageContent(
+                     },
+                     selected = pagerState.currentPage == index,
+                     onClick = { combinedTabClick(index) },
++                    modifier = Modifier.clearAndSetSemantics {
++                        contentDescription = tab.name
++                        selected = pagerState.currentPage == index
++                    },
+                 )
+             }
+         }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/MessagePage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/MessagePage.kt
+index 15df6dad..a0663bba 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/MessagePage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/MessagePage.kt
+@@ -28,6 +28,9 @@ import androidx.compose.runtime.collectAsState
+ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.input.nestedscroll.nestedScroll
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.selected
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+ import cn.a10miaomiao.bilimiao.compose.base.ComposePage
+@@ -183,6 +186,22 @@ private fun MessagePageContent(
+                             pagerState.animateScrollToPage(index)
+                         }
+                     },
++                    modifier = Modifier.clearAndSetSemantics {
++                        val unreadCount = messageState.unread?.let {
++                            when (index) {
++                                0 -> it.reply
++                                1 -> it.at
++                                2 -> it.like
++                                else -> 0
++                            }
++                        } ?: 0
++                        contentDescription = if (unreadCount > 0) {
++                            "${tab.name}，$unreadCount 条未读"
++                        } else {
++                            tab.name
++                        }
++                        selected = pagerState.currentPage == index
++                    },
+                 )
+             }
+         }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/components/MessageItemBox.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/components/MessageItemBox.kt
+index 7c876ed4..a45fe55b 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/components/MessageItemBox.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/components/MessageItemBox.kt
+@@ -14,6 +14,10 @@ import androidx.compose.runtime.Composable
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
++import androidx.compose.ui.semantics.CustomAccessibilityAction
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.customActions
+ import androidx.compose.ui.text.SpanStyle
+ import androidx.compose.ui.text.buildAnnotatedString
+ import androidx.compose.ui.text.font.FontWeight
+@@ -35,11 +39,44 @@ internal fun MessageItemBox(
+     onUserClick: () -> Unit,
+     onDetailClick: () -> Unit,
+     onMessageClick: (() -> Unit),
++    /** 右侧那栏（被评论的内容 / 视频标题）对应的操作名称 */
++    detailActionLabel: String = "查看详情",
++    /** 评论内容对应的操作名称，不需要时传 null */
++    messageActionLabel: String? = null,
++    /** 播报时用的动作词，不传就用界面上显示的那句（比如"回复了我的评论"） */
++    spokenActionText: String? = null,
+ ) {
+     Row(
+         modifier = Modifier
+             .fillMaxWidth()
+-            .padding(10.dp),
++            .padding(10.dp)
++            // 整条消息合成一个无障碍焦点：头像、昵称、动作、评论内容、右侧被评论内容、时间
++            // 一起读；原来的点头像/点内容/点右侧改成读屏的操作菜单
++            .clearAndSetSemantics {
++                contentDescription = buildMessageDescription(
++                    nickname = nickname,
++                    actionText = spokenActionText ?: actionText,
++                    sourceContent = sourceContent,
++                    title = title,
++                    time = time,
++                )
++                customActions = buildList {
++                    add(CustomAccessibilityAction("查看用户主页") {
++                        onUserClick()
++                        true
++                    })
++                    if (sourceContent.isNotBlank() && messageActionLabel != null) {
++                        add(CustomAccessibilityAction(messageActionLabel) {
++                            onMessageClick()
++                            true
++                        })
++                    }
++                    add(CustomAccessibilityAction(detailActionLabel) {
++                        onDetailClick()
++                        true
++                    })
++                }
++            },
+     ) {
+         AsyncImage(
+             model = UrlUtil.autoHttps(avatar) + "@200w_200h",
+@@ -102,4 +139,24 @@ internal fun MessageItemBox(
+             style = MaterialTheme.typography.bodyMedium,
+         )
+     }
++}
++
++/**
++ * 消息条目的无障碍文案，顺序：昵称、对方的内容、动作（回复了我的评论 / 在视频中@了我 / 赞了我的评论）、
++ * 被回复或被赞的内容、时间。动作放在两段内容中间，用来区分哪段是对方说的、哪段是自己被回复的。
++ */
++private fun buildMessageDescription(
++    nickname: String,
++    actionText: String,
++    sourceContent: String?,
++    title: String?,
++    time: Long,
++): String {
++    val parts = mutableListOf<String>()
++    nickname.trim().takeIf { it.isNotEmpty() }?.let { parts.add(it) }
++    sourceContent?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
++    actionText.trim().takeIf { it.isNotEmpty() }?.let { parts.add(it) }
++    title?.takeIf { it.isNotBlank() }?.let { parts.add(it) }
++    NumberUtil.converCTime(time).takeIf { it.isNotBlank() }?.let { parts.add(it) }
++    return parts.joinToString(", ")
+ }
+\ No newline at end of file
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/AtMessageContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/AtMessageContent.kt
+index 3c124a30..de8f3251 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/AtMessageContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/AtMessageContent.kt
+@@ -187,7 +187,9 @@ internal fun AtMessageContent() {
+                         },
+                         onMessageClick = {
+                             viewModel.toMessagePage(item)
+-                        }
++                        },
++                        detailActionLabel = "查看详情",
++                        messageActionLabel = "查看内容来源",
+                     )
+                 }
+             }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/LikeMessageContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/LikeMessageContent.kt
+index 296ecf8d..91719881 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/LikeMessageContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/LikeMessageContent.kt
+@@ -193,7 +193,10 @@ internal fun LikeMessageContent() {
+                         },
+                         onMessageClick = {
+ 
+-                        }
++                        },
++                        detailActionLabel = "查看详情",
++                        // 点赞消息没有可点开的评论内容
++                        messageActionLabel = null,
+                     )
+                 }
+             }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/ReplyMessageContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/ReplyMessageContent.kt
+index aefdb630..0d982448 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/ReplyMessageContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/message/content/ReplyMessageContent.kt
+@@ -189,7 +189,12 @@ internal fun ReplyMessageContent() {
+                         },
+                         onMessageClick = {
+                             viewModel.toDetailPage(item, false)
+-                        }
++                        },
++                        // 右侧那栏点开是整个楼层，评论内容点开是他回复的那条
++                        detailActionLabel = "展开楼层",
++                        messageActionLabel = "查看被回复的评论",
++                        // 播报时只说"回复"，后面直接接自己那条评论的内容
++                        spokenActionText = "回复",
+                     )
+                 }
+             }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/HistoryPage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/HistoryPage.kt
+index 0fa00bf6..c28a637c 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/HistoryPage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/HistoryPage.kt
+@@ -54,6 +54,9 @@ import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.runtime.snapshotFlow
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.onClick
+ import androidx.compose.ui.draw.alpha
+ import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.graphics.Color
+@@ -617,6 +620,8 @@ private fun CalendarRowView(
+                 val dateHeader = formatter.format(date).let { day ->
+                     day.firstOrNull()?.toString() ?: day
+                 }
++                // 完整星期（如"周六"），用于无障碍播报
++                val weekdayText = formatter.format(date)
+ 
+                 val isEnable = date >= (endDate ?: startDate)
+                 val color = if (isEnable)
+@@ -625,7 +630,28 @@ private fun CalendarRowView(
+                     MaterialTheme.colorScheme.outlineVariant
+                 Column(
+                     modifier = Modifier
+-                        .size(40.dp),
++                        .size(40.dp)
++                        // 无障碍：一个日期只保留一个焦点，读成"6月13日 周六"（今天会带上"今天"），
++                        // 否则星期和日号会被拆成两个焦点
++                        .run {
++                            if (isEnable) clickable { onChangeDate(date) }
++                            else this
++                        }
++                        .clearAndSetSemantics {
++                            contentDescription = buildString {
++                                append("${date.monthNumber}月${date.dayOfMonth}日")
++                                append(weekdayText)
++                                if (date == currentDate) {
++                                    append("，今天")
++                                }
++                            }
++                            if (isEnable) {
++                                onClick(label = null) {
++                                    onChangeDate(date)
++                                    true
++                                }
++                            }
++                        },
+                     verticalArrangement = Arrangement.Center,
+                     horizontalAlignment = Alignment.CenterHorizontally,
+                 ) {
+@@ -654,11 +680,7 @@ private fun CalendarRowView(
+                         Box(
+                             modifier = Modifier
+                                 .size(24.dp)
+-                                .clip(CircleShape)
+-                                .run {
+-                                    if (isEnable) clickable { onChangeDate(date) }
+-                                    else this
+-                                },
++                                .clip(CircleShape),
+                             contentAlignment = Alignment.Center,
+                         ) {
+                             Text(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/WatchLaterPage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/WatchLaterPage.kt
+index 21769443..f229d0b0 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/WatchLaterPage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/WatchLaterPage.kt
+@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.lazy.grid.GridCells
+ import androidx.compose.foundation.lazy.grid.GridItemSpan
+ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+@@ -35,8 +36,15 @@ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.alpha
+ import androidx.compose.ui.draw.scale
++import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.onClick
+ import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.role
+ import androidx.compose.ui.semantics.semantics
++import androidx.compose.ui.semantics.toggleableState
++import androidx.compose.ui.state.ToggleableState
+ import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+@@ -489,16 +497,34 @@ private fun WatchLaterPageContent(
+                 }
+             )
+             Spacer(modifier = Modifier.weight(1f))
+-            Text(
+-                text = "自动连播",
+-                style = MaterialTheme.typography.labelMedium,
+-                color = MaterialTheme.colorScheme.onBackground,
+-            )
+-            Switch(
+-                modifier = Modifier.scale(0.75f),
+-                checked = viewModel.isAutoPlay,
+-                onCheckedChange = viewModel::changeAutoPlay,
+-            )
++            Row(
++                modifier = Modifier
++                    .clickable {
++                        viewModel.changeAutoPlay(!viewModel.isAutoPlay)
++                    }
++                    .clearAndSetSemantics {
++                        // 一个焦点、一条文案；开关状态只由 toggleableState 表达，避免重复朗读
++                        contentDescription = "自动连播"
++                        role = Role.Switch
++                        toggleableState = if (viewModel.isAutoPlay) ToggleableState.On else ToggleableState.Off
++                        onClick(label = null) {
++                            viewModel.changeAutoPlay(!viewModel.isAutoPlay)
++                            true
++                        }
++                    },
++                verticalAlignment = Alignment.CenterVertically,
++            ) {
++                Text(
++                    text = "自动连播",
++                    style = MaterialTheme.typography.labelMedium,
++                    color = MaterialTheme.colorScheme.onBackground,
++                )
++                Switch(
++                    modifier = Modifier.scale(0.75f),
++                    checked = viewModel.isAutoPlay,
++                    onCheckedChange = null,
++                )
++            }
+         }
+         SwipeToRefresh(
+             refreshing = isRefreshing,
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/content/TagFollowContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/content/TagFollowContent.kt
+index ee29bd97..370404c2 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/content/TagFollowContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/mine/content/TagFollowContent.kt
+@@ -30,6 +30,8 @@ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+@@ -350,6 +352,7 @@ private fun AttentionButton(
+         DropdownMenu(
+             expanded = expanded,
+             onDismissRequest = { expanded = false },
++            modifier = Modifier.semantics { paneTitle = "关注操作" },
+         ) {
+             DropdownMenuItem(
+                 onClick = {
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/player/SendDanmakuPage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/player/SendDanmakuPage.kt
+index 7937aae6..58cc9882 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/player/SendDanmakuPage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/player/SendDanmakuPage.kt
+@@ -30,6 +30,10 @@ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.focus.FocusRequester
+ import androidx.compose.ui.focus.focusRequester
+ import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.onClick
++import androidx.compose.ui.semantics.selected
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+ import androidx.lifecycle.viewModelScope
+@@ -102,6 +106,24 @@ internal class SendDanmakuViewModel(
+         SelectItemInfo("#9B9B9B", 0x9B9B9B),
+     )
+ 
++    /** 弹幕颜色的中文名，只用于读屏播报，界面上仍然显示色值 */
++    internal val danmakuColorNames = mapOf(
++        0xFFFFFF to "白色",
++        0xFE0302 to "红色",
++        0xFF7204 to "橙色",
++        0xFFAA02 to "橙黄色",
++        0xFFD302 to "金黄色",
++        0xFFFF00 to "黄色",
++        0xA0EE00 to "黄绿色",
++        0x00CD00 to "绿色",
++        0x019899 to "青色",
++        0x4266BE to "蓝色",
++        0x89D5FF to "浅蓝色",
++        0xCC0273 to "紫红色",
++        0x222222 to "深灰色",
++        0x9B9B9B to "灰色",
++    )
++
+     internal val danmakuTextSizeList = listOf<SelectItemInfo<Float>>(
+         SelectItemInfo("默认", 25f),
+         SelectItemInfo("较小", 18f),
+@@ -327,6 +349,15 @@ internal fun SendDanmakuPageContent(
+                                 text = it.label,
+                                 modifier = Modifier.background(Color(it.value.toLong() or 0xFF000000))
+                             )
++                        },
++                        modifier = Modifier.clearAndSetSemantics {
++                            // 播报用颜色名，界面上仍显示色值
++                            contentDescription = viewModel.danmakuColorNames[it.value] ?: it.label
++                            selected = danmakuColor == it.value
++                            onClick {
++                                viewModel.setDanmakuTextColorValue(it.value)
++                                true
++                            }
+                         }
+                     )
+                 }
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/ThemeSettingPage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/ThemeSettingPage.kt
+index ea7e0b78..068ea257 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/ThemeSettingPage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/ThemeSettingPage.kt
+@@ -20,6 +20,9 @@ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.remember
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.selected
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+ import cn.a10miaomiao.bilimiao.compose.base.ComposePage
+@@ -154,7 +157,12 @@ private fun ThemeSettingPageContent(
+                                 viewModel.setDarkMode(mode.first)
+                             },
+                             selected = index == themeState.darkMode,
+-                            modifier = Modifier.width(IntrinsicSize.Max),
++                            modifier = Modifier
++                                .width(IntrinsicSize.Max)
++                                .clearAndSetSemantics {
++                                    contentDescription = mode.second
++                                    selected = index == themeState.darkMode
++                                },
+                         ) {
+                             Text(
+                                 text = mode.second,
+@@ -191,7 +199,12 @@ private fun ThemeSettingPageContent(
+                                 viewModel.setAppBarType(type.first)
+                             },
+                             selected = index == themeState.appBarType,
+-                            modifier = Modifier.width(IntrinsicSize.Max),
++                            modifier = Modifier
++                                .width(IntrinsicSize.Max)
++                                .clearAndSetSemantics {
++                                    contentDescription = type.second
++                                    selected = index == themeState.appBarType
++                                },
+                         ) {
+                             Text(
+                                 text = type.second,
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/proxy/SelectProxyServerPage.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/proxy/SelectProxyServerPage.kt
+index f531b88c..32da71f8 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/proxy/SelectProxyServerPage.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/setting/proxy/SelectProxyServerPage.kt
+@@ -271,6 +271,7 @@ internal fun SelectProxyServerPageContent(
+                                 DropdownMenu(
+                                     expanded = uposMenuExpanded,
+                                     onDismissRequest = { uposMenuExpanded = false },
++                                    modifier = Modifier.semantics { paneTitle = "选择upos视频服务器" },
+                                 ) {
+                                     viewModel.uposList.forEach {
+                                         DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/time/components/CustomTime.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/time/components/CustomTime.kt
+index e38c796f..e9ed9ed7 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/time/components/CustomTime.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/time/components/CustomTime.kt
+@@ -11,6 +11,8 @@ import androidx.compose.material3.*
+ import androidx.compose.runtime.*
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.unit.Dp
+ import androidx.compose.ui.unit.dp
+@@ -176,6 +178,7 @@ fun Header(
+                 DropdownMenu(
+                     expanded = expanded,
+                     onDismissRequest = { expanded = false },
++                    modifier = Modifier.semantics { paneTitle = "选择时间" },
+                 ) {
+                     for (y in minDate.year..maxDate.year) {
+                         DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserFavouriteDetailContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserFavouriteDetailContent.kt
+index 2522edbf..2474a1e1 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserFavouriteDetailContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserFavouriteDetailContent.kt
+@@ -5,7 +5,10 @@ import androidx.compose.material.icons.automirrored.filled.*
+ import androidx.compose.material.icons.filled.*
+ import androidx.compose.material.icons.outlined.*
+ import androidx.compose.foundation.background
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+@@ -32,9 +35,17 @@ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.Alignment
+ import androidx.compose.ui.draw.scale
++import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.onClick
+ import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.role
+ import androidx.compose.ui.semantics.semantics
++import androidx.compose.ui.semantics.toggleableState
++import androidx.compose.ui.state.ToggleableState
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+@@ -455,15 +466,33 @@ internal fun UserFavouriteDetailContent(
+                 )
+             },
+             action = {
+-                Text(
+-                    text = "自动连播",
+-                    style = MaterialTheme.typography.labelMedium,
+-                )
+-                Switch(
+-                    modifier = Modifier.scale(0.75f),
+-                    checked = isAutoPlay,
+-                    onCheckedChange = viewModel::changeAutoPlay,
+-                )
++                Row(
++                    modifier = Modifier
++                        .clickable {
++                            viewModel.changeAutoPlay(!isAutoPlay)
++                        }
++                        .clearAndSetSemantics {
++                            // 一个焦点、一条文案；开关状态只由 toggleableState 表达，避免重复朗读
++                            contentDescription = "自动连播"
++                            role = Role.Switch
++                            toggleableState = if (isAutoPlay) ToggleableState.On else ToggleableState.Off
++                            onClick(label = null) {
++                                viewModel.changeAutoPlay(!isAutoPlay)
++                                true
++                            }
++                        },
++                    verticalAlignment = Alignment.CenterVertically,
++                ) {
++                    Text(
++                        text = "自动连播",
++                        style = MaterialTheme.typography.labelMedium,
++                    )
++                    Switch(
++                        modifier = Modifier.scale(0.75f),
++                        checked = isAutoPlay,
++                        onCheckedChange = null,
++                    )
++                }
+             }
+         )
+         SwipeToRefresh(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserMedialistDetailContent.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserMedialistDetailContent.kt
+index 385b9146..30a5aec2 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserMedialistDetailContent.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/user/content/UserMedialistDetailContent.kt
+@@ -5,7 +5,10 @@ import androidx.compose.material.icons.automirrored.filled.*
+ import androidx.compose.material.icons.filled.*
+ import androidx.compose.material.icons.outlined.*
+ import androidx.compose.foundation.background
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+@@ -26,8 +29,16 @@ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.collectAsState
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
++import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.scale
++import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.semantics.clearAndSetSemantics
++import androidx.compose.ui.semantics.contentDescription
++import androidx.compose.ui.semantics.onClick
++import androidx.compose.ui.semantics.role
++import androidx.compose.ui.semantics.toggleableState
++import androidx.compose.ui.state.ToggleableState
+ import androidx.compose.ui.unit.dp
+ import androidx.lifecycle.ViewModel
+ import androidx.lifecycle.viewModelScope
+@@ -310,15 +321,33 @@ fun UserMedialistDetailContent(
+                 )
+             },
+             action = {
+-                Text(
+-                    text = "自动连播",
+-                    style = MaterialTheme.typography.labelMedium,
+-                )
+-                Switch(
+-                    modifier = Modifier.scale(0.75f),
+-                    checked = viewModel.isAutoPlay,
+-                    onCheckedChange = viewModel::changeAutoPlay,
+-                )
++                Row(
++                    modifier = Modifier
++                        .clickable {
++                            viewModel.changeAutoPlay(!viewModel.isAutoPlay)
++                        }
++                        .clearAndSetSemantics {
++                            // 一个焦点、一条文案；开关状态只由 toggleableState 表达，避免重复朗读
++                            contentDescription = "自动连播"
++                            role = Role.Switch
++                            toggleableState = if (viewModel.isAutoPlay) ToggleableState.On else ToggleableState.Off
++                            onClick(label = null) {
++                                viewModel.changeAutoPlay(!viewModel.isAutoPlay)
++                                true
++                            }
++                        },
++                    verticalAlignment = Alignment.CenterVertically,
++                ) {
++                    Text(
++                        text = "自动连播",
++                        style = MaterialTheme.typography.labelMedium,
++                    )
++                    Switch(
++                        modifier = Modifier.scale(0.75f),
++                        checked = viewModel.isAutoPlay,
++                        onCheckedChange = null,
++                    )
++                }
+             }
+         )
+ 
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoDownloadDialog.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoDownloadDialog.kt
+index c8d30891..50006793 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoDownloadDialog.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoDownloadDialog.kt
+@@ -35,6 +35,8 @@ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+@@ -365,6 +367,7 @@ fun VideoDownloadDialog(
+                             DropdownMenu(
+                                 expanded = expandedQualityMenu,
+                                 onDismissRequest = { expandedQualityMenu = false },
++                                modifier = Modifier.semantics { paneTitle = "选择画质" },
+                             ) {
+                                 state.qualityList.forEach {
+                                     DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoReplyTitleBar.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoReplyTitleBar.kt
+index 1c205fb9..4c62b59c 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoReplyTitleBar.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoReplyTitleBar.kt
+@@ -21,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.semantics.paneTitle
++import androidx.compose.ui.semantics.semantics
+ import androidx.compose.ui.unit.sp
+ import cn.a10miaomiao.bilimiao.compose.components.miao.MiaoTitleBar
+ import cn.a10miaomiao.bilimiao.compose.pages.community.MainReplyViewModel
+@@ -80,6 +82,7 @@ fun VideoReplyTitleBar(
+                     onDismissRequest = {
+                         expanded.value = false
+                     },
++                    modifier = Modifier.semantics { paneTitle = "列表排序" },
+                 ) {
+                     viewModel.sortOrderList.forEach {
+                         DropdownMenuItem(
+diff --git a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoStatBox.kt b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoStatBox.kt
+index 59b4b02c..0894c22e 100644
+--- a/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoStatBox.kt
++++ b/bilimiao-compose/src/commonMain/kotlin/cn/a10miaomiao/bilimiao/compose/pages/video/components/VideoStatBox.kt
+@@ -55,6 +55,7 @@ fun VideoStatBox(
+             } else {
+                 MaterialTheme.colorScheme.primary
+             },
++            selected = reqUser.like != 0,
+             onClick = {
+                 viewModel.requestLike(arc, reqUser)
+             },
+@@ -68,6 +69,7 @@ fun VideoStatBox(
+             } else {
+                 MaterialTheme.colorScheme.primary
+             },
++            selected = reqUser.coin != 0,
+             onClick = {
+                 viewModel.openCoinDialog(
+                     arc.aid.toString(),
+@@ -84,6 +86,7 @@ fun VideoStatBox(
+             } else {
+                 MaterialTheme.colorScheme.primary
+             },
++            selected = reqUser.favorite != 0,
+             onClick = {
+                 viewModel.openAddFavoriteDialog(arc.aid.toString())
+             },
+@@ -107,14 +110,16 @@ fun VideoStatButton(
+     text: String,
+     description: String,
+     color: Color,
++    selected: Boolean = false,
+     onClick: () -> Unit,
+ ) {
++    val contentDesc = if (selected) "已$description" else description
+     ElevatedAssistChip(
+         onClick = onClick,
+         leadingIcon = {
+             Icon(
+                 imageVector = icon,
+-                contentDescription = description,
++                contentDescription = contentDesc,
+                 modifier = Modifier.size(24.dp),
+                 tint = color,
+             )
+diff --git a/bilimiao-compose/src/test/java/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemanticsTest.kt b/bilimiao-compose/src/test/java/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemanticsTest.kt
+index 3f22ac59..231cb884 100644
+--- a/bilimiao-compose/src/test/java/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemanticsTest.kt
++++ b/bilimiao-compose/src/test/java/cn/a10miaomiao/bilimiao/compose/components/community/ReplyItemSemanticsTest.kt
+@@ -5,8 +5,8 @@ import org.junit.Test
+ 
+ /**
+  * 评论项无障碍合并语义的单元测试
+- * 验证拼接规则：昵称, 评论内容, 图片, 点赞/已点赞, X条回复, 时间发布于IP
+- * 间隔：英文逗号加空格
++ * 验证拼接规则：置顶等卡片标, 昵称（视频作者加"UP主"前缀）, 评论内容, 图片, 点赞/已点赞, X条回复, 时间发布于IP
++ * 昵称与内容之间用"说:"引出；间隔：英文逗号加空格
+  */
+ class ReplyItemSemanticsTest {
+ 
+@@ -23,7 +23,7 @@ class ReplyItemSemanticsTest {
+             location = "浙江",
+         )
+         assertEquals(
+-            "张三, 这视频真好看, 点赞128, 5条回复, 3小时前发布于浙江",
++            "张三说: 这视频真好看, 点赞128, 5条回复, 3小时前发布于浙江",
+             result
+         )
+     }
+@@ -41,7 +41,7 @@ class ReplyItemSemanticsTest {
+             location = "浙江",
+         )
+         assertEquals(
+-            "张三, 这视频真好看, 已点赞129, 5条回复, 3小时前发布于浙江",
++            "张三说: 这视频真好看, 已点赞129, 5条回复, 3小时前发布于浙江",
+             result
+         )
+     }
+@@ -59,7 +59,7 @@ class ReplyItemSemanticsTest {
+             location = "广东",
+         )
+         assertEquals(
+-            "张三, 看这个, 含一张图片, 点赞10, 2条回复, 10分钟前发布于广东",
++            "张三说: 看这个, 含一张图片, 点赞10, 2条回复, 10分钟前发布于广东",
+             result
+         )
+     }
+@@ -77,7 +77,7 @@ class ReplyItemSemanticsTest {
+             location = "广东",
+         )
+         assertEquals(
+-            "张三, 看图, 共3张图片, 点赞10, 2条回复, 10分钟前发布于广东",
++            "张三说: 看图, 共3张图片, 点赞10, 2条回复, 10分钟前发布于广东",
+             result
+         )
+     }
+@@ -95,7 +95,7 @@ class ReplyItemSemanticsTest {
+             location = "",
+         )
+         assertEquals(
+-            "张三, 内容, 点赞1, 0条回复, 刚刚",
++            "张三说: 内容, 点赞1, 0条回复, 刚刚",
+             result
+         )
+     }
+@@ -113,7 +113,7 @@ class ReplyItemSemanticsTest {
+             location = "北京",
+         )
+         assertEquals(
+-            "李四, 沙发, 点赞0, 0条回复, 1小时前发布于北京",
++            "李四说: 沙发, 点赞0, 0条回复, 1小时前发布于北京",
+             result
+         )
+     }
+@@ -135,4 +135,62 @@ class ReplyItemSemanticsTest {
+             result
+         )
+     }
++
++    @Test
++    fun 视频作者评论_昵称带UP主前缀() {
++        val result = ReplyItemSemantics.buildContentDescription(
++            uname = "张三",
++            content = "感谢大家支持",
++            pictureCount = 0,
++            like = 66,
++            isLike = true,
++            replyCount = 3,
++            time = "1天前",
++            location = "浙江",
++            isUpper = true,
++        )
++        assertEquals(
++            "UP主张三说: 感谢大家支持, 已点赞66, 3条回复, 1天前发布于浙江",
++            result
++        )
++    }
++
++    @Test
++    fun 置顶标签_放在最前面() {
++        val result = ReplyItemSemantics.buildContentDescription(
++            uname = "张三",
++            content = "置顶说明",
++            pictureCount = 0,
++            like = 10,
++            isLike = false,
++            replyCount = 1,
++            time = "5小时前",
++            location = "广东",
++            cardLabels = listOf("置顶"),
++        )
++        assertEquals(
++            "置顶, 张三说: 置顶说明, 点赞10, 1条回复, 5小时前发布于广东",
++            result
++        )
++    }
++
++    @Test
++    fun cardLabels含UP主_不重复播报() {
++        val result = ReplyItemSemantics.buildContentDescription(
++            uname = "张三",
++            content = "作者本人评论",
++            pictureCount = 0,
++            like = 10,
++            isLike = false,
++            replyCount = 1,
++            time = "5小时前",
++            location = "广东",
++            isUpper = true,
++            cardLabels = listOf("置顶", "UP主"),
++        )
++        assertEquals(
++            "置顶, UP主张三说: 作者本人评论, 点赞10, 1条回复, 5小时前发布于广东",
++            result
++        )
++    }
+ }

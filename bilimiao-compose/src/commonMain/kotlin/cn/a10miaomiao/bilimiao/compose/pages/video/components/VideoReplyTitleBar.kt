@@ -14,6 +14,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -82,6 +84,7 @@ fun VideoReplyTitleBar(
                     onDismissRequest = {
                         expanded.value = false
                     },
+                    modifier = Modifier.semantics { paneTitle = "列表排序" },
                 ) {
                     viewModel.sortOrderList.forEach {
                         DropdownMenuItem(

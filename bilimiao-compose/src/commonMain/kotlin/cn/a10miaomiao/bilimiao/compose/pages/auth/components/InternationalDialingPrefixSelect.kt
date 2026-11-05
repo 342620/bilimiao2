@@ -10,6 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun InternationalDialingPrefixSelect(
@@ -28,6 +31,7 @@ fun InternationalDialingPrefixSelect(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            modifier = Modifier.semantics { paneTitle = "选择国家区号" },
         ) {
             for (item in InternationalDialingPrefixList) {
                 DropdownMenuItem(

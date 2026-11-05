@@ -5,7 +5,10 @@ import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +35,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -435,7 +448,7 @@ internal fun UserFavouriteDetailContent(
                             } else {
                                 BilimiaoIcons.Common.Menuunfold
                             },
-                            contentDescription = null,
+                            contentDescription = if (hideFirstPane) "展开菜单" else "折叠菜单",
                             tint = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .padding(8.dp)
@@ -453,15 +466,33 @@ internal fun UserFavouriteDetailContent(
                 )
             },
             action = {
-                Text(
-                    text = "自动连播",
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                Switch(
-                    modifier = Modifier.scale(0.75f),
-                    checked = isAutoPlay,
-                    onCheckedChange = viewModel::changeAutoPlay,
-                )
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            viewModel.changeAutoPlay(!isAutoPlay)
+                        }
+                        .clearAndSetSemantics {
+                            // 一个焦点、一条文案；开关状态只由 toggleableState 表达，避免重复朗读
+                            contentDescription = "自动连播"
+                            role = Role.Switch
+                            toggleableState = if (isAutoPlay) ToggleableState.On else ToggleableState.Off
+                            onClick(label = null) {
+                                viewModel.changeAutoPlay(!isAutoPlay)
+                                true
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "自动连播",
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    Switch(
+                        modifier = Modifier.scale(0.75f),
+                        checked = isAutoPlay,
+                        onCheckedChange = null,
+                    )
+                }
             }
         )
         SwipeToRefresh(
@@ -546,6 +577,7 @@ internal fun UserFavouriteDetailContent(
             onDismissRequest = {
                 showEditDialog = false
             },
+            modifier = Modifier.semantics { paneTitle = "编辑收藏夹" },
             title = {
                 Text(
                     text = "编辑收藏夹",
@@ -598,6 +630,7 @@ internal fun UserFavouriteDetailContent(
             onDismissRequest = {
                 showDeleteDialog = false
             },
+            modifier = Modifier.semantics { paneTitle = "提示" },
             title = {
                 Text(
                     text = "提示",

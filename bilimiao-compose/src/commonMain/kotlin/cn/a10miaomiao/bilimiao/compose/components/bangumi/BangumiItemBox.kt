@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.common.foundation.htmlText
@@ -151,12 +152,13 @@ fun BangumiItemBox(
                             Icon(
                                 tint = MaterialTheme.colorScheme.onBackground,
                                 imageVector = Icons.Filled.MoreVert,
-                                contentDescription = null,
+                                contentDescription = "更多",
                             )
                         }
                         DropdownMenu(
                             expanded = expandedMenu.value,
                             onDismissRequest = { expandedMenu.value = false },
+                            modifier = Modifier.semantics { paneTitle = "更多" },
                         ) {
                             moreMenu.filterNotNull().forEach { menu ->
                                 DropdownMenuItem(

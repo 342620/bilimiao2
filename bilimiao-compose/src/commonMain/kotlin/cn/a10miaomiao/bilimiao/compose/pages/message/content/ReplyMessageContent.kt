@@ -189,7 +189,12 @@ internal fun ReplyMessageContent() {
                         },
                         onMessageClick = {
                             viewModel.toDetailPage(item, false)
-                        }
+                        },
+                        // 右侧那栏点开是整个楼层，评论内容点开是他回复的那条
+                        detailActionLabel = "展开楼层",
+                        messageActionLabel = "查看被回复的评论",
+                        // 播报时只说"回复"，后面直接接自己那条评论的内容
+                        spokenActionText = "回复",
                     )
                 }
             }

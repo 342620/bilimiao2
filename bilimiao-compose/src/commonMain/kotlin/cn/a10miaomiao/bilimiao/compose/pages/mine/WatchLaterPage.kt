@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -35,6 +36,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -487,16 +497,34 @@ private fun WatchLaterPageContent(
                 }
             )
             Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = "自动连播",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Switch(
-                modifier = Modifier.scale(0.75f),
-                checked = viewModel.isAutoPlay,
-                onCheckedChange = viewModel::changeAutoPlay,
-            )
+            Row(
+                modifier = Modifier
+                    .clickable {
+                        viewModel.changeAutoPlay(!viewModel.isAutoPlay)
+                    }
+                    .clearAndSetSemantics {
+                        // 一个焦点、一条文案；开关状态只由 toggleableState 表达，避免重复朗读
+                        contentDescription = "自动连播"
+                        role = Role.Switch
+                        toggleableState = if (viewModel.isAutoPlay) ToggleableState.On else ToggleableState.Off
+                        onClick(label = null) {
+                            viewModel.changeAutoPlay(!viewModel.isAutoPlay)
+                            true
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "自动连播",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Switch(
+                    modifier = Modifier.scale(0.75f),
+                    checked = viewModel.isAutoPlay,
+                    onCheckedChange = null,
+                )
+            }
         }
         SwipeToRefresh(
             refreshing = isRefreshing,
@@ -606,6 +634,7 @@ private fun WatchLaterPageContent(
             onDismissRequest = {
                 showCleanViewedTipsDialog.value = false
             },
+            modifier = Modifier.semantics { paneTitle = "提示" },
             title = {
                 Text(text = "提示")
             },
@@ -636,6 +665,7 @@ private fun WatchLaterPageContent(
             onDismissRequest = {
                 showCleanExpiredTipsDialog.value = false
             },
+            modifier = Modifier.semantics { paneTitle = "提示" },
             title = {
                 Text(text = "提示")
             },
