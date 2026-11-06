@@ -273,7 +273,7 @@ fun ReplyItemBox(
         isUpper = isUpper,
         cardLabels = cardLabels,
     )
-    val customActions = buildList {
+    val accessibilityActions = buildList {
         add(CustomAccessibilityAction("查看用户主页") { onAvatarClick(); true })
         add(CustomAccessibilityAction(if (isLike) "取消点赞" else "点赞") { onLikeClick(); true })
         add(CustomAccessibilityAction(if (count > 0) "查看回复" else "回复评论") { onReplyClick(); true })
@@ -288,7 +288,7 @@ fun ReplyItemBox(
         Modifier
             .clearAndSetSemantics {
                 text = annotatedText
-                this.customActions = customActions
+                customActions = accessibilityActions
             }
             .clickable(onClick = onClick)
             .padding(10.dp)
