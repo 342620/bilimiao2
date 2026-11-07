@@ -65,7 +65,7 @@ fun StartSearchCard(
                         .clickable(onClick = onScannerClick),
                     imageVector = Icons.Filled.CameraAlt,
                     tint = MaterialTheme.colorScheme.onSurface,
-                    contentDescription = null
+                    contentDescription = "扫一扫"
                 )
             }
         }
