@@ -48,6 +48,9 @@ import cn.a10miaomiao.bilimiao.compose.common.foundation.inlineAnnotatedContent
 import cn.a10miaomiao.bilimiao.compose.components.image.ImagesGrid
 import cn.a10miaomiao.bilimiao.compose.components.image.MiaoAsyncImage
 import cn.a10miaomiao.bilimiao.compose.components.image.provider.PreviewImageModel
+import cn.a10miaomiao.bilimiao.compose.components.image.provider.localImagePreviewerController
+import cn.a10miaomiao.bilimiao.compose.components.zoomable.previewer.VerticalDragType
+import cn.a10miaomiao.bilimiao.compose.components.zoomable.previewer.rememberPreviewerState
 import com.a10miaomiao.bilimiao.comm.utils.MiaoLogger
 import com.a10miaomiao.bilimiao.comm.utils.NumberUtil
 import com.a10miaomiao.bilimiao.comm.utils.UrlUtil
@@ -273,12 +276,25 @@ fun ReplyItemBox(
         isUpper = isUpper,
         cardLabels = cardLabels,
     )
+    val previewerController = localImagePreviewerController()
+    val previewerState = rememberPreviewerState(
+        verticalDragType = VerticalDragType.Down,
+        pageCount = { picturesList.size },
+        getKey = { picturesList[it].originalUrl },
+    )
     val accessibilityActions = buildList {
         add(CustomAccessibilityAction("查看用户主页") { onAvatarClick(); true })
         add(CustomAccessibilityAction(if (isLike) "取消点赞" else "点赞") { onLikeClick(); true })
         add(CustomAccessibilityAction(if (count > 0) "查看回复" else "回复评论") { onReplyClick(); true })
         if (picturesList.isNotEmpty()) {
-            add(CustomAccessibilityAction("查看图片") { /* TODO: 打开图片预览 */ true })
+            add(CustomAccessibilityAction("查看图片") {
+                previewerController.enterTransform(
+                    state = previewerState,
+                    models = picturesList,
+                    index = 0,
+                )
+                true
+            })
         }
         if (showDelete) {
             add(CustomAccessibilityAction("删除评论") { onDeleteClick(); true })
