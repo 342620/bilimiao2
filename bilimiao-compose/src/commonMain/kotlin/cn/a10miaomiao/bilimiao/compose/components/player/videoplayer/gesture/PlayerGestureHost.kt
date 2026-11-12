@@ -33,6 +33,8 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.components.player.videoplayer.ControllerVisibility
@@ -302,6 +304,19 @@ fun PlayerGestureHost(
                 // 顶部 24dp 不接管任何手势, 交给系统的「从顶部边缘下滑唤出状态栏」
                 .padding(top = GESTURE_AREA_TOP_INSET)
                 .combineClickableWithFamilyGesture()
+                // 整屏点击层原来对读屏是"无名按钮", 补一个随控制器显隐变化的标签:
+                // 控件显示时说"隐藏播放控件"(点击后收起), 隐藏时说"显示播放控件".
+                .semantics {
+                    if (family.clickToToggleController) {
+                        contentDescription = if (
+                            controllerState.visibility == ControllerVisibility.Visible
+                        ) {
+                            "隐藏播放控件"
+                        } else {
+                            "显示播放控件"
+                        }
+                    }
+                }
                 .thenIf(family.swipeToSeek && enableSwipeToSeek) {
                     val swipeSeekInteraction = rememberSwipeSeekInteraction(
                         controllerState,

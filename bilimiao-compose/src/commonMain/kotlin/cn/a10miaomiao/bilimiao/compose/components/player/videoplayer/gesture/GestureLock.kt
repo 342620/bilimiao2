@@ -23,6 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.components.player.videoplayer.ControllerVisibility
 import cn.a10miaomiao.bilimiao.compose.components.player.videoplayer.GestureFamily
@@ -88,7 +90,10 @@ fun LockedScreenGestureHost(
                 remember { MutableInteractionSource() },
                 indication = null,
                 onClick = { setFullVisible(true) },
-            ).fillMaxSize(),
+            )
+            // 锁屏手势层同样是覆盖整个画面的点击区域, 读屏不应读成无名按钮.
+            .semantics { contentDescription = "显示播放控件" }
+            .fillMaxSize(),
     )
 
     if (controllerVisibility() == ControllerVisibility.Visible) {
