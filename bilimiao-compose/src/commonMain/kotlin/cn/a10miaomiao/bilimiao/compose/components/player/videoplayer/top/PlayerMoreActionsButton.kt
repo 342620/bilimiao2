@@ -28,6 +28,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
@@ -99,6 +101,10 @@ fun PlayerMoreActionsButton(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { dismiss() },
+            modifier = Modifier.semantics {
+                // 进二级菜单时把当前子菜单名字报给读屏，划进来就知道自己在哪一层
+                paneTitle = openedSubMenu?.title ?: "更多设置"
+            },
         ) {
             if (openedSubMenu == null) {
                 subMenus.forEachIndexed { index, subMenu ->
