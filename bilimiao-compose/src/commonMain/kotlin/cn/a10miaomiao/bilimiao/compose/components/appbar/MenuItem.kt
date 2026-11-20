@@ -63,7 +63,8 @@ internal fun AppBarMenuItemIcon(
     data.iconVector?.let {
         Icon(
             imageVector = it,
-            contentDescription = data.title,
+            // 同一行里已经有文字标题，图标再带一遍名字会被读成「首页 首页」
+            contentDescription = if (data.title.isEmpty()) data.contentDescription else null,
             tint = contentColor,
             modifier = modifier
                 .size(AppBarConfig.MenuItemIconSize),

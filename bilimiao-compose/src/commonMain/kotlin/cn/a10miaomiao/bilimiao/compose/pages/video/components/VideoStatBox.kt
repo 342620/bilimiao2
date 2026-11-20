@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import cn.a10miaomiao.bilimiao.compose.assets.BilimiaoIcons
 import cn.a10miaomiao.bilimiao.compose.assets.bilimiaoicons.Common
@@ -113,13 +115,16 @@ fun VideoStatButton(
     selected: Boolean = false,
     onClick: () -> Unit,
 ) {
-    val contentDesc = if (selected) "已$description" else description
     ElevatedAssistChip(
+        // 名字固定用「点赞」，选中状态走 stateDescription，避免读成名不名字不字
+        modifier = modifier.semantics {
+            stateDescription = if (selected) "已$description" else ""
+        },
         onClick = onClick,
         leadingIcon = {
             Icon(
                 imageVector = icon,
-                contentDescription = contentDesc,
+                contentDescription = description,
                 modifier = Modifier.size(24.dp),
                 tint = color,
             )

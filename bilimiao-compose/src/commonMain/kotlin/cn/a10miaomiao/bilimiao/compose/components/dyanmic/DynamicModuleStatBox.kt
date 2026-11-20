@@ -57,7 +57,7 @@ fun DynamicModuleStatBox(
             ) {
                 Icon(
                     BilimiaoIcons.Common.Share,
-                    contentDescription = "share",
+                    contentDescription = "分享",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(end = 4.dp)
                         .size(16.dp)
@@ -79,7 +79,7 @@ fun DynamicModuleStatBox(
             ) {
                 Icon(
                     BilimiaoIcons.Common.Reply,
-                    contentDescription = "reply",
+                    contentDescription = "评论",
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(end = 4.dp)
                         .size(16.dp)
@@ -102,7 +102,7 @@ fun DynamicModuleStatBox(
                 if (isLike) {
                     Icon(
                         BilimiaoIcons.Common.Likefill,
-                        contentDescription = "like",
+                        contentDescription = "点赞",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(end = 4.dp)
                             .size(16.dp)
@@ -110,7 +110,7 @@ fun DynamicModuleStatBox(
                 } else {
                     Icon(
                         BilimiaoIcons.Common.Like,
-                        contentDescription = "like",
+                        contentDescription = "点赞",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(end = 4.dp)
                             .size(16.dp)

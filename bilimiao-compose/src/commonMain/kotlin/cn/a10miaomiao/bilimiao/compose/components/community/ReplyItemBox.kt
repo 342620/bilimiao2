@@ -420,7 +420,7 @@ fun ReplyItemBox(
                     if (isLike) {
                         Icon(
                             BilimiaoIcons.Common.Likefill,
-                            contentDescription = "like",
+                            contentDescription = "已点赞",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(end = 4.dp)
                                 .size(14.dp)
@@ -429,7 +429,7 @@ fun ReplyItemBox(
                     } else {
                         Icon(
                             BilimiaoIcons.Common.Like,
-                            contentDescription = "like",
+                            contentDescription = "点赞",
                             tint = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(end = 4.dp)
                                 .size(14.dp)
@@ -452,7 +452,7 @@ fun ReplyItemBox(
                 ) {
                     Icon(
                         BilimiaoIcons.Common.Reply,
-                        contentDescription = "reply",
+                        contentDescription = "评论",
                         tint = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(end = 4.dp)
                             .size(14.dp)
